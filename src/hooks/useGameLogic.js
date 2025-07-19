@@ -84,6 +84,11 @@ const useGameLogic = () => {
     setShowRoleDisplay(false);
   }, [playerName, currentIndex, currentRoles]);
 
+  const closeRoleDisplay = useCallback(() => {
+    setShowRoleDisplay(false);
+    setPlayerName('');
+  }, []);
+
   const showGodViewHandler = useCallback(() => {
     const mafiaRoles = [];
     const citizenRoles = [];
@@ -155,6 +160,7 @@ const useGameLogic = () => {
     handleClick,
     handleEnter,
     confirmPlayer,
+    closeRoleDisplay,
     showGodViewHandler
   };
 };
