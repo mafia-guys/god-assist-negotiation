@@ -19,6 +19,7 @@ const App = () => {
     handleEnter,
     confirmPlayer,
     closeRoleDisplay,
+    getRoleIcon,
     showGodViewHandler
   } = useGameLogic();
 
@@ -54,6 +55,7 @@ const App = () => {
         handleEnter={handleEnter}
         confirmPlayer={confirmPlayer}
         onClose={closeRoleDisplay}
+        getRoleIcon={getRoleIcon}
       />
 
       <GodView 

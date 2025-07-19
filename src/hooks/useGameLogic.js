@@ -11,6 +11,20 @@ const rolesByCount = {
   14: ["رئیس مافیا", "مذاکره‌گر", "جوکر", "مافیای ساده", "پزشک", "کارآگاه", "خبرنگار", "تک‌تیرانداز", "زره‌پوش", "کنستانتین", "شهروند ساده", "شهروند ساده", "شهروند ساده", "شهروند ساده"]
 };
 
+const roleIcons = {
+  "رئیس مافیا": "👑", // Crown for boss
+  "مذاکره‌گر": "🗣️", // Speaking head for negotiator
+  "جوکر": "🃏", // Joker card
+  "مافیای ساده": "🔫", // Gun for simple mafia
+  "پزشک": "👨‍⚕️", // Doctor
+  "کارآگاه": "🕵️", // Detective
+  "خبرنگار": "📰", // Newspaper for reporter
+  "تک‌تیرانداز": "🎯", // Target for sniper
+  "زره‌پوش": "🛡️", // Shield for armored
+  "کنستانتین": "⚡", // Lightning for Constantine
+  "شهروند ساده": "👤" // Simple person silhouette for citizen
+};
+
 const useGameLogic = () => {
   const [playerCount, setPlayerCount] = useState(10);
   const [currentRoles, setCurrentRoles] = useState([]);
@@ -89,6 +103,10 @@ const useGameLogic = () => {
     setPlayerName('');
   }, []);
 
+  const getRoleIcon = useCallback((role) => {
+    return roleIcons[role] || "❓";
+  }, []);
+
   const showGodViewHandler = useCallback(() => {
     const mafiaRoles = [];
     const citizenRoles = [];
@@ -130,14 +148,16 @@ const useGameLogic = () => {
     html += '<h4 style="color:#b30000; margin-top: 20px;">🟥 تیم مافیا:</h4>';
     html += '<ul style="list-style-type: disc; padding-right: 20px; margin-right: 0;">';
     mafiaRoles.forEach(entry => {
-      html += `<li style="margin-bottom: 5px; text-align: right;">${entry.name}: ${entry.role}</li>`;
+      const icon = roleIcons[entry.role] || "❓";
+      html += `<li style="margin-bottom: 5px; text-align: right;">${entry.name}: ${icon} ${entry.role}</li>`;
     });
     html += '</ul>';
 
     html += '<h4 style="color:#004080; margin-top: 20px;">🟦 تیم شهروندان:</h4>';
     html += '<ul style="list-style-type: disc; padding-right: 20px; margin-right: 0;">';
     citizenRoles.forEach(entry => {
-      html += `<li style="margin-bottom: 5px; text-align: right;">${entry.name}: ${entry.role}</li>`;
+      const icon = roleIcons[entry.role] || "❓";
+      html += `<li style="margin-bottom: 5px; text-align: right;">${entry.name}: ${icon} ${entry.role}</li>`;
     });
     html += '</ul>';
     html += '</div>';
@@ -161,6 +181,7 @@ const useGameLogic = () => {
     handleEnter,
     confirmPlayer,
     closeRoleDisplay,
+    getRoleIcon,
     showGodViewHandler
   };
 };

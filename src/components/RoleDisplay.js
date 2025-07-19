@@ -8,7 +8,8 @@ const RoleDisplay = ({
   setPlayerName, 
   handleEnter, 
   confirmPlayer,
-  onClose 
+  onClose,
+  getRoleIcon 
 }) => {
   // Handle Escape key to close modal
   useEffect(() => {
@@ -55,7 +56,11 @@ const RoleDisplay = ({
           </div>
           <div className="modal-body text-center">
             <div className="mb-4">
-              <h3 className="text-primary">{currentRoles[currentIndex]}</h3>
+              <div className="mb-3" style={{ fontSize: '4rem' }}>
+                {getRoleIcon && getRoleIcon(currentRoles[currentIndex])}
+              </div>
+              <h3 className="text-primary mb-2">{currentRoles[currentIndex]}</h3>
+              <p className="text-muted">نقش شما در بازی</p>
             </div>
             <div className="input-group mb-3">
               <span className="input-group-text">نام بازیکن</span>
