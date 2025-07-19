@@ -11,18 +11,19 @@ const rolesByCount = {
   14: ["رئیس مافیا", "مذاکره‌گر", "جوکر", "مافیای ساده", "پزشک", "کارآگاه", "خبرنگار", "تک‌تیرانداز", "زره‌پوش", "کنستانتین", "شهروند ساده", "شهروند ساده", "شهروند ساده", "شهروند ساده"]
 };
 
+// Using high-quality icons from iconify or similar free icon services
 const roleIcons = {
-  "رئیس مافیا": "👑", // Crown for boss
-  "مذاکره‌گر": "🗣️", // Speaking head for negotiator
-  "جوکر": "🃏", // Joker card
-  "مافیای ساده": "🔫", // Gun for simple mafia
-  "پزشک": "👨‍⚕️", // Doctor
-  "کارآگاه": "🕵️", // Detective
-  "خبرنگار": "📰", // Newspaper for reporter
-  "تک‌تیرانداز": "🎯", // Target for sniper
-  "زره‌پوش": "🛡️", // Shield for armored
-  "کنستانتین": "⚡", // Lightning for Constantine
-  "شهروند ساده": "👤" // Simple person silhouette for citizen
+  "رئیس مافیا": "/images/roles/mafia-boss.png",
+  "مذاکره‌گر": "/images/roles/negotiator.png", 
+  "جوکر": "/images/roles/joker.png",
+  "مافیای ساده": "/images/roles/simple-mafia.png",
+  "پزشک": "/images/roles/doctor.png",
+  "کارآگاه": "/images/roles/detective.png",
+  "خبرنگار": "/images/roles/reporter.png",
+  "تک‌تیرانداز": "/images/roles/sniper.png",
+  "زره‌پوش": "/images/roles/armored.png",
+  "کنستانتین": "/images/roles/constantine.png",
+  "شهروند ساده": "/images/roles/simple-citizen.png"
 };
 
 const useGameLogic = () => {
@@ -148,16 +149,22 @@ const useGameLogic = () => {
     html += '<h4 style="color:#b30000; margin-top: 20px;">🟥 تیم مافیا:</h4>';
     html += '<ul style="list-style-type: disc; padding-right: 20px; margin-right: 0;">';
     mafiaRoles.forEach(entry => {
-      const icon = roleIcons[entry.role] || "❓";
-      html += `<li style="margin-bottom: 5px; text-align: right;">${entry.name}: ${icon} ${entry.role}</li>`;
+      const iconPath = roleIcons[entry.role] || "/images/roles/unknown.png";
+      html += `<li style="margin-bottom: 12px; text-align: right; display: flex; align-items: center; justify-content: flex-end;">
+        <span style="margin-left: 12px; font-size: 1.2rem;">${entry.name}: ${entry.role}</span>
+        <img src="${iconPath}" alt="${entry.role}" style="width: 48px; height: 48px; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);" />
+      </li>`;
     });
     html += '</ul>';
 
     html += '<h4 style="color:#004080; margin-top: 20px;">🟦 تیم شهروندان:</h4>';
     html += '<ul style="list-style-type: disc; padding-right: 20px; margin-right: 0;">';
     citizenRoles.forEach(entry => {
-      const icon = roleIcons[entry.role] || "❓";
-      html += `<li style="margin-bottom: 5px; text-align: right;">${entry.name}: ${icon} ${entry.role}</li>`;
+      const iconPath = roleIcons[entry.role] || "/images/roles/unknown.png";
+      html += `<li style="margin-bottom: 12px; text-align: right; display: flex; align-items: center; justify-content: flex-end;">
+        <span style="margin-left: 12px; font-size: 1.2rem;">${entry.name}: ${entry.role}</span>
+        <img src="${iconPath}" alt="${entry.role}" style="width: 48px; height: 48px; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);" />
+      </li>`;
     });
     html += '</ul>';
     html += '</div>';

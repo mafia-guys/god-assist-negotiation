@@ -27,6 +27,10 @@ const RoleDisplay = ({
 
   if (!showRoleDisplay) return null;
 
+  // Debug: Check the image path
+  const roleIcon = getRoleIcon && getRoleIcon(currentRoles[currentIndex]);
+  console.log('Role icon path:', roleIcon);
+
   // Handle backdrop click
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
@@ -37,36 +41,84 @@ const RoleDisplay = ({
   return (
     <div 
       className="modal show d-block" 
-      style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+      style={{ 
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        overflow: 'hidden'
+      }}
       tabIndex="-1"
       onClick={handleBackdropClick}
     >
-      <div className="modal-dialog modal-dialog-centered">
-        <div className="modal-content">
-          <div className="modal-header text-center">
-            <h5 className="modal-title w-100">نقش بازیکن</h5>
+      <div className="modal-dialog modal-fullscreen">
+        <div className="modal-content" style={{ overflow: 'hidden', height: '100vh' }}>
+          <div className="modal-header text-center" style={{ padding: '1rem', minHeight: '80px', backgroundColor: 'rgba(0, 0, 0, 0.8)' }}>
+            <h3 className="modal-title w-100" style={{ 
+              fontSize: '2.5rem', 
+              fontWeight: 'bold',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+              color: '#FFFFFF',
+              margin: 0
+            }}>
+              {currentRoles[currentIndex]}
+            </h3>
             {onClose && (
               <button 
                 type="button" 
-                className="btn-close" 
+                className="btn-close position-absolute" 
+                style={{ 
+                  top: '0.5rem', 
+                  right: '0.5rem',
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  borderRadius: '50%',
+                  width: '40px',
+                  height: '40px',
+                  border: '2px solid rgba(255, 255, 255, 0.8)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+                  filter: 'none',
+                  opacity: '1'
+                }}
                 onClick={onClose}
                 aria-label="Close"
               ></button>
             )}
           </div>
-          <div className="modal-body text-center">
-            <div className="mb-4">
-              <div className="mb-3" style={{ fontSize: '4rem' }}>
-                {getRoleIcon && getRoleIcon(currentRoles[currentIndex])}
-              </div>
-              <h3 className="text-primary mb-2">{currentRoles[currentIndex]}</h3>
-              <p className="text-muted">نقش شما در بازی</p>
-            </div>
-            <div className="input-group mb-3">
-              <span className="input-group-text">نام بازیکن</span>
+          <div 
+            className="modal-body text-center d-flex flex-column justify-content-center align-items-center" 
+            style={{ 
+              minHeight: '80vh',
+              backgroundImage: `url(${roleIcon})`,
+              backgroundSize: 'cover',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
+              position: 'relative',
+              overflow: 'hidden'
+            }}
+          >
+            <div 
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                zIndex: 1
+              }}
+            ></div>
+            
+            {/* Spacer to push input to bottom */}
+            <div style={{ flex: 1 }}></div>
+            
+            <div className="mb-4" style={{ maxWidth: '500px', position: 'relative', zIndex: 2, width: '100%' }}>
               <input 
                 type="text" 
                 className="form-control" 
+                style={{ 
+                  fontSize: '1.5rem', 
+                  padding: '12px 20px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  border: '2px solid #007bff',
+                  textAlign: 'center'
+                }}
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
                 onKeyDown={handleEnter}
@@ -75,8 +127,14 @@ const RoleDisplay = ({
               />
             </div>
           </div>
-          <div className="modal-footer justify-content-center">
-            <button className="btn btn-success btn-lg" onClick={confirmPlayer}>
+          <div className="modal-footer justify-content-center" style={{ position: 'relative', zIndex: 2 }}>
+            <button className="btn btn-success btn-lg" onClick={confirmPlayer} style={{ 
+              fontSize: '1.5rem', 
+              padding: '15px 30px',
+              backgroundColor: 'rgba(40, 167, 69, 0.95)',
+              border: '2px solid #28a745',
+              boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
+            }}>
               <i className="bi bi-check-circle"></i> تأیید
             </button>
           </div>
