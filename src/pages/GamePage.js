@@ -1,5 +1,5 @@
 import React from 'react';
-import { GameControls, PlayerGrid, RoleDisplay, GodView } from '../components';
+import { GameControls, PlayerGrid, RoleDisplay } from '../components';
 
 const GamePage = ({ 
   playerCount, 
