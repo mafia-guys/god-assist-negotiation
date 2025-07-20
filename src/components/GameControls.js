@@ -3,7 +3,7 @@ import React from 'react';
 const GameControls = ({ playerCount, setPlayerCount, startGame }) => {
   return (
     <div className="controls mb-4">
-      <label htmlFor="playerCount" className="form-label">تعداد بازیکنان (۷ تا ۱۴):</label>
+      <label htmlFor="playerCount" className="form-label"> ستعداد بازیکنان (۷ تا ۱۴):</label>
       <input 
         type="number" 
         id="playerCount" 
