@@ -62,10 +62,9 @@ const useGameLogic = () => {
     if (usedButtons.has(index)) return;
     
     setCurrentIndex(index);
-    setUsedButtons(prev => new Set([...prev, index]));
     setPlayerName('');
     setShowRoleDisplay(true);
-  }, [usedButtons, currentRoles]);
+  }, [usedButtons]);
 
   const handleEnter = useCallback((event) => {
     if (event.key === "Enter") {
@@ -80,6 +79,7 @@ const useGameLogic = () => {
         newAssignments[currentIndex] = { name, role: currentRoles[currentIndex] };
         return newAssignments;
       });
+      setUsedButtons(prev => new Set([...prev, currentIndex]));
       setShowRoleDisplay(false);
     }
   }, [playerName, currentIndex, currentRoles]);
@@ -96,6 +96,7 @@ const useGameLogic = () => {
       newAssignments[currentIndex] = { name, role: currentRoles[currentIndex] };
       return newAssignments;
     });
+    setUsedButtons(prev => new Set([...prev, currentIndex]));
     setShowRoleDisplay(false);
   }, [playerName, currentIndex, currentRoles]);
 
