@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-const Navigation = () => {
+const Navigation = ({ gameStarted = false }) => {
   const location = useLocation();
   const navbarToggleRef = useRef(null);
   const navbarRef = useRef(null);
@@ -88,6 +88,18 @@ const Navigation = () => {
                 تایمرها
               </Link>
             </li>
+            {gameStarted && (
+              <li className="nav-item">
+                <Link 
+                  className={`nav-link ${isActive('/god-view') ? 'active' : ''}`} 
+                  to="/god-view"
+                  onClick={closeNavbar}
+                >
+                  <i className="bi bi-eye me-1"></i>
+                  لیست نهایی
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       </div>

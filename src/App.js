@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import { Navigation } from './components';
-import { GamePage, RolesPage, TimersPage } from './pages';
+import { GamePage, RolesPage, TimersPage, GodViewPage } from './pages';
 import { useGameLogic, useTimers } from './hooks';
 
 const App = () => {
@@ -38,7 +38,7 @@ const App = () => {
       <div className="min-vh-100 bg-light">
         <audio ref={alarmRef} src="alarm.mp3" preload="auto" />
         
-        <Navigation />
+        <Navigation gameStarted={currentRoles && currentRoles.length > 0} />
         
         <Routes>
           <Route 
@@ -81,6 +81,15 @@ const App = () => {
                 timerDisplays={timerDisplays}
                 startTimer={startTimer}
                 stopTimer={stopTimer}
+              />
+            } 
+          />
+          <Route 
+            path="/god-view" 
+            element={
+              <GodViewPage 
+                godView={godView}
+                showGodViewHandler={showGodViewHandler}
               />
             } 
           />

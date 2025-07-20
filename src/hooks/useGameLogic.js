@@ -156,7 +156,6 @@ const useGameLogic = () => {
     citizenRoles.sort((a, b) => getPriority(b.role) - getPriority(a.role));
 
     let html = '<div style="direction: rtl;">';
-    html += '<h3 style="text-align: center; margin-bottom: 30px;">📋 لیست نهایی نقش‌ها</h3>';
     
     // Two-column layout using CSS Grid
     html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;">';

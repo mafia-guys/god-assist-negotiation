@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { GameControls, PlayerGrid, RoleDisplay } from '../components';
 
 const GamePage = ({ 
@@ -54,10 +55,6 @@ const GamePage = ({
             onClose={closeRoleDisplay}
             getRoleIcon={getRoleIcon}
           />
-
-          {gameStarted && godView && (
-            <div className="mt-3" dangerouslySetInnerHTML={{ __html: godView }} />
-          )}
         </div>
       </div>
       
@@ -65,13 +62,13 @@ const GamePage = ({
         <footer className="fixed-bottom bg-light border-top py-3">
           <div className="container text-center">
             <div className="btn-group" role="group">
-              <button 
+              <Link 
+                to="/god-view"
                 className="btn btn-outline-success"
-                onClick={showGodViewHandler}
               >
                 <i className="bi bi-eye me-1"></i>
                 نمایش لیست نهایی
-              </button>
+              </Link>
               <button 
                 className="btn btn-outline-danger"
                 onClick={resetGame}
