@@ -1,8 +1,13 @@
 body {
     font-family: Tahoma, sans-serif;
     direction: rtl;
-    background-color: #f9f9f9;
-    padding: 20px;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+.min-vh-100 {
+    min-height: 100vh;
 }
 
 .button.used {
@@ -37,4 +42,24 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 20px;
     justify-items: center;
+}
+
+/* Navigation styling */
+.navbar-brand {
+    font-weight: bold;
+}
+
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 5px;
+}
+
+/* Card styling for roles page */
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
 }

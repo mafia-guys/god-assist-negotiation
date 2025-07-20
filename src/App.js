@@ -1,6 +1,8 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-import { GameControls, PlayerGrid, RoleDisplay, GodView, TimerSection } from './components';
+import { Navigation } from './components';
+import { GamePage, RolesPage, TimersPage } from './pages';
 import { useGameLogic, useTimers } from './hooks';
 
 const App = () => {
@@ -31,44 +33,58 @@ const App = () => {
   } = useTimers();
 
   return (
-    <div className="container text-center">
-      <audio ref={alarmRef} src="alarm.mp3" preload="auto" />
-      
-      <GameControls 
-        playerCount={playerCount}
-        setPlayerCount={setPlayerCount}
-        startGame={startGame}
-      />
-
-      <PlayerGrid 
-        playerCount={playerCount}
-        usedButtons={usedButtons}
-        handleClick={handleClick}
-      />
-
-      <RoleDisplay 
-        showRoleDisplay={showRoleDisplay}
-        currentRoles={currentRoles}
-        currentIndex={currentIndex}
-        playerName={playerName}
-        setPlayerName={setPlayerName}
-        handleEnter={handleEnter}
-        confirmPlayer={confirmPlayer}
-        onClose={closeRoleDisplay}
-        getRoleIcon={getRoleIcon}
-      />
-
-      <GodView 
-        godView={godView}
-        showGodViewHandler={showGodViewHandler}
-      />
-
-      <TimerSection 
-        timerDisplays={timerDisplays}
-        startTimer={startTimer}
-        stopTimer={stopTimer}
-      />
-    </div>
+    <Router>
+      <div className="min-vh-100 bg-light">
+        <audio ref={alarmRef} src="alarm.mp3" preload="auto" />
+        
+        <Navigation />
+        
+        <Routes>
+          <Route 
+            path="/" 
+            element={
+              <GamePage 
+                playerCount={playerCount}
+                setPlayerCount={setPlayerCount}
+                currentRoles={currentRoles}
+                currentIndex={currentIndex}
+                usedButtons={usedButtons}
+                showRoleDisplay={showRoleDisplay}
+                playerName={playerName}
+                setPlayerName={setPlayerName}
+                godView={godView}
+                startGame={startGame}
+                handleClick={handleClick}
+                handleEnter={handleEnter}
+                confirmPlayer={confirmPlayer}
+                closeRoleDisplay={closeRoleDisplay}
+                getRoleIcon={getRoleIcon}
+                showGodViewHandler={showGodViewHandler}
+              />
+            } 
+          />
+          <Route 
+            path="/roles" 
+            element={
+              <RolesPage 
+                currentRoles={currentRoles}
+                getRoleIcon={getRoleIcon}
+              />
+            } 
+          />
+          <Route 
+            path="/timers" 
+            element={
+              <TimersPage 
+                timerDisplays={timerDisplays}
+                startTimer={startTimer}
+                stopTimer={stopTimer}
+              />
+            } 
+          />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 
