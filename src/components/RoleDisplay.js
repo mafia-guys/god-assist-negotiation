@@ -133,7 +133,6 @@ const RoleDisplay = ({
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
                 onKeyDown={handleEnter}
-                autoFocus
                 placeholder="نام بازیکن را وارد کنید"
               />
             </div>
