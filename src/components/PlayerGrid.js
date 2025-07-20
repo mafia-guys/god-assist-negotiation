@@ -16,7 +16,7 @@ const PlayerGrid = ({ playerCount, usedButtons, handleClick }) => {
         className="d-grid gap-1 mx-auto" 
         style={{
           gridTemplateColumns: `repeat(${columns}, 1fr)`,
-          maxWidth: '400px',
+          maxWidth: '480px',
           aspectRatio: 'auto'
         }}
       >
@@ -28,14 +28,15 @@ const PlayerGrid = ({ playerCount, usedButtons, handleClick }) => {
             disabled={usedButtons.has(i)}
             style={{
               aspectRatio: '1',
-              fontSize: '2rem',
-              minHeight: '50px',
+              fontSize: '2.5rem',
+              minHeight: '60px',
               border: '2px solid',
-              borderColor: usedButtons.has(i) ? '#198754' : '#495057',
-              backgroundColor: usedButtons.has(i) ? '#198754' : 'rgba(255, 255, 255, 0.95)',
-              color: usedButtons.has(i) ? '#fff' : '#212529',
-              boxShadow: '0 3px 6px rgba(0,0,0,0.15)',
-              transition: 'all 0.2s ease'
+              borderColor: usedButtons.has(i) ? 'transparent' : '#495057',
+              backgroundColor: usedButtons.has(i) ? 'transparent' : 'rgba(255, 255, 255, 0.95)',
+              color: usedButtons.has(i) ? 'transparent' : '#212529',
+              boxShadow: usedButtons.has(i) ? 'none' : '0 3px 6px rgba(0,0,0,0.15)',
+              transition: 'all 0.2s ease',
+              visibility: usedButtons.has(i) ? 'hidden' : 'visible'
             }}
           >
             {usedButtons.has(i) ? "✓" : i + 1}
