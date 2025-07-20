@@ -109,6 +109,16 @@ const useGameLogic = () => {
     return roleIcons[role] || "❓";
   }, []);
 
+  const resetGame = useCallback(() => {
+    setCurrentRoles([]);
+    setCurrentIndex(-1);
+    setAssignments([]);
+    setUsedButtons(new Set());
+    setShowRoleDisplay(false);
+    setPlayerName('');
+    setGodView(false);
+  }, []);
+
   const showGodViewHandler = useCallback(() => {
     const mafiaRoles = [];
     const citizenRoles = [];
@@ -145,30 +155,39 @@ const useGameLogic = () => {
     mafiaRoles.sort((a, b) => getPriority(b.role) - getPriority(a.role));
     citizenRoles.sort((a, b) => getPriority(b.role) - getPriority(a.role));
 
-    let html = '<div style="direction: rtl; text-align: right;">';
-    html += '<h3 style="text-align: center;">📋 لیست نهایی نقش‌ها:</h3>';
-    html += '<h4 style="color:#b30000; margin-top: 20px;">🟥 تیم مافیا:</h4>';
-    html += '<ul style="list-style-type: disc; padding-right: 20px; margin-right: 0;">';
+    let html = '<div style="direction: rtl;">';
+    html += '<h3 style="text-align: center; margin-bottom: 30px;">📋 لیست نهایی نقش‌ها</h3>';
+    
+    // Two-column layout using CSS Grid
+    html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;">';
+    
+    // Mafia column
+    html += '<div style="background: linear-gradient(135deg, #ffebee, #ffcdd2); border: 2px solid #c62828; border-radius: 12px; padding: 20px;">';
+    html += '<h4 style="color: #b71c1c; text-align: center; margin-bottom: 20px; font-weight: bold;">🟥 تیم مافیا</h4>';
+    html += '<div style="space-y: 12px;">';
     mafiaRoles.forEach(entry => {
       const iconPath = roleIcons[entry.role] || "/images/roles/unknown.png";
-      html += `<li style="margin-bottom: 12px; text-align: right; display: flex; align-items: center; justify-content: flex-end;">
-        <span style="margin-left: 12px; font-size: 1.2rem;">${entry.name}: ${entry.role}</span>
-        <img src="${iconPath}" alt="${entry.role}" style="width: 48px; height: 48px; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);" />
-      </li>`;
+      html += `<div style="display: flex; align-items: center; justify-content: flex-end; background: white; border-radius: 8px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <span style="margin-left: 12px; font-size: 1.1rem; font-weight: 500;">${entry.name}: ${entry.role}</span>
+        <img src="${iconPath}" alt="${entry.role}" style="width: 40px; height: 40px; object-fit: contain; border-radius: 6px;" />
+      </div>`;
     });
-    html += '</ul>';
+    html += '</div></div>';
 
-    html += '<h4 style="color:#004080; margin-top: 20px;">🟦 تیم شهروندان:</h4>';
-    html += '<ul style="list-style-type: disc; padding-right: 20px; margin-right: 0;">';
+    // Citizens column
+    html += '<div style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); border: 2px solid #1565c0; border-radius: 12px; padding: 20px;">';
+    html += '<h4 style="color: #0d47a1; text-align: center; margin-bottom: 20px; font-weight: bold;">🟦 تیم شهروندان</h4>';
+    html += '<div style="space-y: 12px;">';
     citizenRoles.forEach(entry => {
       const iconPath = roleIcons[entry.role] || "/images/roles/unknown.png";
-      html += `<li style="margin-bottom: 12px; text-align: right; display: flex; align-items: center; justify-content: flex-end;">
-        <span style="margin-left: 12px; font-size: 1.2rem;">${entry.name}: ${entry.role}</span>
-        <img src="${iconPath}" alt="${entry.role}" style="width: 48px; height: 48px; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);" />
-      </li>`;
+      html += `<div style="display: flex; align-items: center; justify-content: flex-end; background: white; border-radius: 8px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <span style="margin-left: 12px; font-size: 1.1rem; font-weight: 500;">${entry.name}: ${entry.role}</span>
+        <img src="${iconPath}" alt="${entry.role}" style="width: 40px; height: 40px; object-fit: contain; border-radius: 6px;" />
+      </div>`;
     });
-    html += '</ul>';
-    html += '</div>';
+    html += '</div></div>';
+    
+    html += '</div></div>';
     
     setGodView(html);
   }, [currentRoles, assignments]);
@@ -190,7 +209,8 @@ const useGameLogic = () => {
     confirmPlayer,
     closeRoleDisplay,
     getRoleIcon,
-    showGodViewHandler
+    showGodViewHandler,
+    resetGame
   };
 };
 

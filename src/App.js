@@ -22,7 +22,8 @@ const App = () => {
     confirmPlayer,
     closeRoleDisplay,
     getRoleIcon,
-    showGodViewHandler
+    showGodViewHandler,
+    resetGame
   } = useGameLogic();
 
   const {
@@ -60,6 +61,7 @@ const App = () => {
                 closeRoleDisplay={closeRoleDisplay}
                 getRoleIcon={getRoleIcon}
                 showGodViewHandler={showGodViewHandler}
+                resetGame={resetGame}
               />
             } 
           />
