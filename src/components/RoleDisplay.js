@@ -49,8 +49,18 @@ const RoleDisplay = ({
       onClick={handleBackdropClick}
     >
       <div className="modal-dialog modal-fullscreen">
-        <div className="modal-content" style={{ overflow: 'hidden', height: '100vh' }}>
-          <div className="modal-header text-center" style={{ padding: '1rem', minHeight: '80px', backgroundColor: 'rgba(0, 0, 0, 0.8)' }}>
+        <div className="modal-content" style={{ 
+          overflow: 'hidden', 
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          <div className="modal-header text-center" style={{ 
+            padding: '1rem', 
+            minHeight: '80px', 
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            flexShrink: 0
+          }}>
             <h3 className="modal-title w-100" style={{ 
               fontSize: '2.5rem', 
               fontWeight: 'bold',
@@ -84,13 +94,14 @@ const RoleDisplay = ({
           <div 
             className="modal-body text-center d-flex flex-column justify-content-center align-items-center" 
             style={{ 
-              minHeight: '80vh',
               backgroundImage: `url(${roleIcon})`,
               backgroundSize: 'cover',
               backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
               position: 'relative',
-              overflow: 'hidden'
+              overflow: 'hidden',
+              flex: '1',
+              minHeight: '0'
             }}
           >
             <div 
@@ -108,7 +119,7 @@ const RoleDisplay = ({
             {/* Spacer to push input to bottom */}
             <div style={{ flex: 1 }}></div>
             
-            <div className="mb-4" style={{ maxWidth: '500px', position: 'relative', zIndex: 2, width: '100%' }}>
+            <div className="mb-3" style={{ maxWidth: '500px', position: 'relative', zIndex: 2, width: '100%' }}>
               <input 
                 type="text" 
                 className="form-control" 
@@ -127,13 +138,25 @@ const RoleDisplay = ({
               />
             </div>
           </div>
-          <div className="modal-footer justify-content-center" style={{ position: 'relative', zIndex: 2 }}>
-            <button className="btn btn-success btn-lg" onClick={confirmPlayer} style={{ 
+          
+          {/* Fixed footer that won't be cut off */}
+          <div className="modal-footer" style={{ 
+            position: 'relative', 
+            zIndex: 2,
+            flexShrink: 0,
+            padding: '0',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            borderTop: 'none',
+            margin: 0
+          }}>
+            <button className="btn btn-success" onClick={confirmPlayer} style={{ 
               fontSize: '1.5rem', 
-              padding: '15px 30px',
+              padding: '20px',
               backgroundColor: 'rgba(40, 167, 69, 0.95)',
               border: '2px solid #28a745',
-              boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
+              boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+              width: '100%',
+              borderRadius: '0'
             }}>
               <i className="bi bi-check-circle"></i> تأیید
             </button>
