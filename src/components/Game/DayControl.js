@@ -3,7 +3,7 @@ import { roleIcons } from '../../constants/gameConstants';
 
 const DayControl = ({ currentRoles, assignments }) => {
   const [eliminatedPlayers, setEliminatedPlayers] = useState(new Set());
-  const [currentPhase, setCurrentPhase] = useState('discussion'); // 'discussion', 'voting', 'trial'
+  const [currentPhase, setCurrentPhase] = useState('discussion'); // 'discussion', 'voting', 'trial', 'expulsion'
   const [selectedPlayer, setSelectedPlayer] = useState(null);
 
   // Get all players with their roles and names, ordered by selection sequence
@@ -61,6 +61,7 @@ const DayControl = ({ currentRoles, assignments }) => {
       case 'discussion': return 'primary';
       case 'voting': return 'warning';
       case 'trial': return 'danger';
+      case 'expulsion': return 'dark';
       default: return 'secondary';
     }
   };
@@ -70,18 +71,34 @@ const DayControl = ({ currentRoles, assignments }) => {
       case 'discussion': return 'بحث و گفتگو';
       case 'voting': return 'رای‌گیری';
       case 'trial': return 'محاکمه';
+      case 'expulsion': return 'اخراج از شهر';
       default: return 'نامشخص';
     }
   };
 
-  const PlayerCard = ({ player, onEliminate, onRevive, isSelected, onSelect }) => (
+  // Helper function to determine if a role is Mafia or Citizen
+  const isMafiaRole = (role) => {
+    return ["رئیس مافیا", "مذاکره‌گر", "مافیای ساده"].includes(role);
+  };
+
+  // Get background color based on role
+  const getRoleBackgroundColor = (role) => {
+    if (isMafiaRole(role)) {
+      return 'rgba(255, 235, 238, 0.7)'; // Light red background for Mafia
+    } else {
+      return 'rgba(227, 242, 253, 0.7)'; // Light blue background for Citizens
+    }
+  };
+
+  const PlayerCard = ({ player, onEliminate, onRevive, isSelected, onSelect, showActions }) => (
     <div 
       className={`card mb-3 ${isSelected ? 'border-warning' : ''} ${!player.isAlive ? 'bg-light' : ''}`}
       style={{ 
         cursor: 'pointer',
         opacity: player.isAlive ? 1 : 0.6,
         transform: isSelected ? 'scale(1.02)' : 'scale(1)',
-        transition: 'all 0.2s ease'
+        transition: 'all 0.2s ease',
+        backgroundColor: player.isAlive ? getRoleBackgroundColor(player.role) : undefined
       }}
       onClick={() => onSelect && onSelect(player.id)}
     >
@@ -99,35 +116,37 @@ const DayControl = ({ currentRoles, assignments }) => {
               }}
             />
           </div>
-          <div className="col-6">
+          <div className={showActions ? "col-6" : "col-10"}>
             <h6 className="mb-1 fw-bold">{player.name}</h6>
             <small className="text-muted">{player.role}</small>
             {!player.isAlive && <span className="badge bg-danger ms-2">حذف شده</span>}
             {isSelected && <span className="badge bg-warning text-dark ms-2">انتخاب شده</span>}
           </div>
-          <div className="col-4 text-end">
-            {player.isAlive ? (
-              <button 
-                className="btn btn-sm btn-outline-danger"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEliminate(player.id);
-                }}
-              >
-                <i className="bi bi-x-circle"></i>
-              </button>
-            ) : (
-              <button 
-                className="btn btn-sm btn-outline-success"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRevive(player.id);
-                }}
-              >
-                <i className="bi bi-arrow-clockwise"></i>
-              </button>
-            )}
-          </div>
+          {showActions && (
+            <div className="col-4 text-end">
+              {player.isAlive ? (
+                <button 
+                  className="btn btn-sm btn-outline-danger"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEliminate(player.id);
+                  }}
+                >
+                  <i className="bi bi-x-circle"></i>
+                </button>
+              ) : (
+                <button 
+                  className="btn btn-sm btn-outline-success"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRevive(player.id);
+                  }}
+                >
+                  <i className="bi bi-arrow-clockwise"></i>
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -166,6 +185,12 @@ const DayControl = ({ currentRoles, assignments }) => {
                       onClick={() => setCurrentPhase('trial')}
                     >
                       محاکمه
+                    </button>
+                    <button 
+                      className={`btn btn-${currentPhase === 'expulsion' ? getPhaseColor('expulsion') : 'outline-' + getPhaseColor('expulsion')}`}
+                      onClick={() => setCurrentPhase('expulsion')}
+                    >
+                      اخراج
                     </button>
                   </div>
                 </div>
@@ -245,6 +270,7 @@ const DayControl = ({ currentRoles, assignments }) => {
                         onEliminate={eliminatePlayer}
                         onSelect={setSelectedPlayer}
                         isSelected={selectedPlayer === player.id}
+                        showActions={currentPhase === 'expulsion'}
                       />
                     ))
                   ) : (
@@ -273,6 +299,7 @@ const DayControl = ({ currentRoles, assignments }) => {
                         key={player.id}
                         player={player}
                         onRevive={revivePlayer}
+                        showActions={currentPhase === 'expulsion'}
                       />
                     ))
                   ) : (
@@ -298,40 +325,61 @@ const DayControl = ({ currentRoles, assignments }) => {
                 </div>
                 <div className="card-body">
                   <div className="row text-center">
-                    <div className="col-md-3 mb-2">
+                    <div className="col-md-2 col-6 mb-2">
                       <button 
-                        className="btn btn-warning w-100"
+                        className="btn btn-secondary w-100 btn-sm"
                         onClick={() => setSelectedPlayer(null)}
                       >
                         <i className="bi bi-arrow-counterclockwise me-1"></i>
                         لغو انتخاب
                       </button>
                     </div>
-                    <div className="col-md-3 mb-2">
+                    <div className="col-md-2 col-6 mb-2">
                       <button 
-                        className="btn btn-info w-100"
+                        className="btn btn-primary w-100 btn-sm"
                         onClick={() => setCurrentPhase('discussion')}
                       >
                         <i className="bi bi-chat-dots me-1"></i>
-                        شروع بحث
+                        بحث
                       </button>
                     </div>
-                    <div className="col-md-3 mb-2">
+                    <div className="col-md-2 col-6 mb-2">
                       <button 
-                        className="btn btn-warning w-100"
+                        className="btn btn-warning w-100 btn-sm"
                         onClick={() => setCurrentPhase('voting')}
                       >
                         <i className="bi bi-hand-thumbs-up me-1"></i>
-                        شروع رای‌گیری
+                        رای‌گیری
                       </button>
                     </div>
-                    <div className="col-md-3 mb-2">
+                    <div className="col-md-2 col-6 mb-2">
                       <button 
-                        className="btn btn-danger w-100"
+                        className="btn btn-danger w-100 btn-sm"
                         onClick={() => setCurrentPhase('trial')}
                       >
                         <i className="bi bi-gavel me-1"></i>
-                        شروع محاکمه
+                        محاکمه
+                      </button>
+                    </div>
+                    <div className="col-md-2 col-6 mb-2">
+                      <button 
+                        className="btn btn-dark w-100 btn-sm"
+                        onClick={() => setCurrentPhase('expulsion')}
+                      >
+                        <i className="bi bi-door-open me-1"></i>
+                        اخراج
+                      </button>
+                    </div>
+                    <div className="col-md-2 col-6 mb-2">
+                      <button 
+                        className="btn btn-success w-100 btn-sm"
+                        onClick={() => {
+                          setCurrentPhase('discussion');
+                          setSelectedPlayer(null);
+                        }}
+                      >
+                        <i className="bi bi-arrow-repeat me-1"></i>
+                        دور جدید
                       </button>
                     </div>
                   </div>
