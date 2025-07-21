@@ -34,7 +34,6 @@ const useGameLogic = () => {
   const [usedButtons, setUsedButtons] = useState(new Set());
   const [showRoleDisplay, setShowRoleDisplay] = useState(false);
   const [playerName, setPlayerName] = useState('');
-  const [godView, setGodView] = useState('');
 
   const shuffle = (array) => {
     const shuffled = [...array];
@@ -55,7 +54,6 @@ const useGameLogic = () => {
     setAssignments(new Array(playerCount).fill(null));
     setUsedButtons(new Set());
     setShowRoleDisplay(false);
-    setGodView('');
   }, [playerCount]);
 
   const handleClick = useCallback((index) => {
@@ -116,80 +114,7 @@ const useGameLogic = () => {
     setUsedButtons(new Set());
     setShowRoleDisplay(false);
     setPlayerName('');
-    setGodView(false);
   }, []);
-
-  const showGodViewHandler = useCallback(() => {
-    const mafiaRoles = [];
-    const citizenRoles = [];
-    
-    currentRoles.forEach((role, i) => {
-      const entry = assignments[i];
-      const name = (entry && entry.name) ? entry.name : "بازیکن " + (i + 1);
-      const pair = { name: name, role: role };
-
-      if (["رئیس مافیا", "مذاکره‌گر", "جوکر", "مافیای ساده"].includes(role)) {
-        mafiaRoles.push(pair);
-      } else {
-        citizenRoles.push(pair);
-      }
-    });
-
-    const getPriority = (role) => {
-      const priorities = {
-        "رئیس مافیا": 100,
-        "جوکر": 90,
-        "مذاکره‌گر": 85,
-        "مافیای ساده": 80,
-        "پزشک": 100,
-        "کارآگاه": 95,
-        "خبرنگار": 85,
-        "تک‌تیرانداز": 80,
-        "زره‌پوش": 70,
-        "کنستانتین": 65,
-        "شهروند ساده": 50
-      };
-      return priorities[role] || 0;
-    };
-
-    mafiaRoles.sort((a, b) => getPriority(b.role) - getPriority(a.role));
-    citizenRoles.sort((a, b) => getPriority(b.role) - getPriority(a.role));
-
-    let html = '<div style="direction: rtl;">';
-    
-    // Two-column layout using CSS Grid
-    html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;">';
-    
-    // Mafia column
-    html += '<div style="background: linear-gradient(135deg, #ffebee, #ffcdd2); border: 2px solid #c62828; border-radius: 12px; padding: 20px;">';
-    html += '<h4 style="color: #b71c1c; text-align: center; margin-bottom: 20px; font-weight: bold;">🟥 تیم مافیا</h4>';
-    html += '<div>';
-    mafiaRoles.forEach(entry => {
-      const iconPath = roleIcons[entry.role] || "/images/roles/unknown.png";
-      html += `<div style="display: flex; align-items: center; justify-content: flex-end; background: white; border-radius: 8px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <span style="margin-left: 12px; font-size: 1.1rem; font-weight: 500;">${entry.name}: ${entry.role}</span>
-        <img src="${iconPath}" alt="${entry.role}" style="width: 40px; height: 40px; object-fit: contain; border-radius: 6px;" />
-      </div>`;
-    });
-    html += '</div></div>';
-
-    // Citizens column
-    html += '<div style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); border: 2px solid #1565c0; border-radius: 12px; padding: 20px;">';
-    html += '<h4 style="color: #0d47a1; text-align: center; margin-bottom: 20px; font-weight: bold;">🟦 تیم شهروندان</h4>';
-    html += '<div>';
-    citizenRoles.forEach(entry => {
-      const iconPath = roleIcons[entry.role] || "/images/roles/unknown.png";
-      html += `<div style="display: flex; align-items: center; justify-content: flex-end; background: white; border-radius: 8px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <span style="margin-left: 12px; font-size: 1.1rem; font-weight: 500;">${entry.name}: ${entry.role}</span>
-        <img src="${iconPath}" alt="${entry.role}" style="width: 40px; height: 40px; object-fit: contain; border-radius: 6px;" />
-      </div>`;
-    });
-    html += '</div></div>';
-    
-    html += '</div></div>';
-    
-    setGodView(html);
-  }, [currentRoles, assignments]);
 
   return {
     playerCount,
@@ -201,14 +126,12 @@ const useGameLogic = () => {
     showRoleDisplay,
     playerName,
     setPlayerName,
-    godView,
     startGame,
     handleClick,
     handleEnter,
     confirmPlayer,
     closeRoleDisplay,
     getRoleIcon,
-    showGodViewHandler,
     resetGame
   };
 };

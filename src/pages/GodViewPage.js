@@ -1,16 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { GodViewDisplay } from '../components';
 
-const GodViewPage = ({ godView, showGodViewHandler }) => {
-  // Generate the god view if it doesn't exist yet
-  React.useEffect(() => {
-    if (!godView) {
-      showGodViewHandler();
-    }
-  }, [godView, showGodViewHandler]);
-
+const GodViewPage = ({ currentRoles, assignments }) => {
   return (
-    <div className="container">
+    <div className="container py-4">
       <div className="row justify-content-center">
         <div className="col-lg-10">
           {/* Header */}
@@ -20,17 +14,18 @@ const GodViewPage = ({ godView, showGodViewHandler }) => {
             </Link>
             
             <h4 className="text-center mb-0">
-               نقشهای بازیکنان
+              <i className="bi bi-eye-fill me-2 text-primary"></i>
+              لیست نهایی بازیکنان
             </h4>
             
             <div style={{ width: '32px' }}></div>
           </div>
           
           {/* Content */}
-          {godView ? (
+          {currentRoles && currentRoles.length > 0 ? (
             <div className="card shadow-sm border-0">
               <div className="card-body p-4">
-                <div dangerouslySetInnerHTML={{ __html: godView }} />
+                <GodViewDisplay currentRoles={currentRoles} assignments={assignments} />
               </div>
             </div>
           ) : (

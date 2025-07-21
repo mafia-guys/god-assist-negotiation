@@ -7,18 +7,17 @@ const GamePage = ({
   setPlayerCount, 
   currentRoles,
   currentIndex,
+  assignments,
   usedButtons,
   showRoleDisplay,
   playerName,
   setPlayerName,
-  godView,
   startGame,
   handleClick,
   handleEnter,
   confirmPlayer,
   closeRoleDisplay,
   getRoleIcon,
-  showGodViewHandler,
   resetGame
 }) => {
   // Check if game has been started (currentRoles array exists and has roles)

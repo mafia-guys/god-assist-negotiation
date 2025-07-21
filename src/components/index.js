@@ -1,7 +1,11 @@
-export { default as GameControls } from './GameControls';
-export { default as PlayerGrid } from './PlayerGrid';
-export { default as RoleDisplay } from './RoleDisplay';
-export { default as GodView } from './GodView';
-export { default as TimerSection } from './TimerSection';
-export { default as TimerBox } from './TimerBox';
-export { default as Navigation } from './Navigation';
+// Game components
+export { GameControls, PlayerGrid } from './Game';
+
+// UI components
+export { Navigation, RoleDisplay } from './UI';
+
+// Timer components
+export { TimerSection, TimerBox } from './Timer';
+
+// GodView components
+export { GodView, GodViewDisplay } from './GodView';

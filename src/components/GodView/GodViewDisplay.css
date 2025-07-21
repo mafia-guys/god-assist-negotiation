@@ -1,0 +1,72 @@
+.god-view-container {
+  direction: rtl;
+}
+
+.teams-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+.team-column {
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.mafia-team {
+  background: linear-gradient(135deg, #ffebee, #ffcdd2);
+  border: 2px solid #c62828;
+}
+
+.citizen-team {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border: 2px solid #1565c0;
+}
+
+.team-title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.mafia-title {
+  color: #b71c1c;
+}
+
+.citizen-title {
+  color: #0d47a1;
+}
+
+.player-card {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  background: white;
+  border-radius: 8px;
+  padding: 6px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.player-info {
+  margin-left: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.player-name {
+  margin-bottom: 2px;
+}
+
+.player-role {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.player-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 6px;
+}

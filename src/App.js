@@ -11,18 +11,17 @@ const App = () => {
     setPlayerCount,
     currentRoles,
     currentIndex,
+    assignments,
     usedButtons,
     showRoleDisplay,
     playerName,
     setPlayerName,
-    godView,
     startGame,
     handleClick,
     handleEnter,
     confirmPlayer,
     closeRoleDisplay,
     getRoleIcon,
-    showGodViewHandler,
     resetGame
   } = useGameLogic();
 
@@ -49,18 +48,17 @@ const App = () => {
                 setPlayerCount={setPlayerCount}
                 currentRoles={currentRoles}
                 currentIndex={currentIndex}
+                assignments={assignments}
                 usedButtons={usedButtons}
                 showRoleDisplay={showRoleDisplay}
                 playerName={playerName}
                 setPlayerName={setPlayerName}
-                godView={godView}
                 startGame={startGame}
                 handleClick={handleClick}
                 handleEnter={handleEnter}
                 confirmPlayer={confirmPlayer}
                 closeRoleDisplay={closeRoleDisplay}
                 getRoleIcon={getRoleIcon}
-                showGodViewHandler={showGodViewHandler}
                 resetGame={resetGame}
               />
             } 
@@ -88,8 +86,8 @@ const App = () => {
             path="/god-view" 
             element={
               <GodViewPage 
-                godView={godView}
-                showGodViewHandler={showGodViewHandler}
+                currentRoles={currentRoles}
+                assignments={assignments}
               />
             } 
           />
