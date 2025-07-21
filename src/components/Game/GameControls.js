@@ -80,17 +80,44 @@ const GameControls = ({ playerCount, setPlayerCount, startGame }) => {
                   <i className="bi bi-info-circle me-1"></i>
                   نقش‌های این بازی ({playerCount} بازیکن):
                 </small>
-                <div className="d-flex flex-wrap gap-1">
-                  {getRolesForCount(playerCount).map((role, index) => (
-                    <span 
-                      key={index}
-                      className={`badge ${role.includes('مافیا') || role.includes('مذاکره‌گر') ? 'bg-danger' : 'bg-success'} me-1 mb-1`}
-                      style={{ fontSize: '0.75rem' }}
-                    >
-                      {role}
-                    </span>
-                  ))}
-                </div>
+                
+                {(() => {
+                  const roles = getRolesForCount(playerCount);
+                  const mafiaRoles = roles.filter(role => role.includes('مافیا') || role.includes('مذاکره‌گر'));
+                  const citizenRoles = roles.filter(role => !role.includes('مافیا') && !role.includes('مذاکره‌گر'));
+                  
+                  return (
+                    <>
+                      {/* Mafia Roles */}
+                      <div className="d-flex flex-wrap gap-1 mb-2">
+                        {mafiaRoles.map((role, index) => (
+                          <span 
+                            key={`mafia-${index}`}
+                            className="badge bg-danger me-1 mb-1"
+                            style={{ fontSize: '0.75rem' }}
+                          >
+                            {role}
+                          </span>
+                        ))}
+                      </div>
+                      
+                      {/* Citizen Roles */}
+                      {citizenRoles.length > 0 && (
+                        <div className="d-flex flex-wrap gap-1">
+                          {citizenRoles.map((role, index) => (
+                            <span 
+                              key={`citizen-${index}`}
+                              className="badge bg-success me-1 mb-1"
+                              style={{ fontSize: '0.75rem' }}
+                            >
+                              {role}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             </div>
           </div>
@@ -165,7 +192,13 @@ const getRolesForCount = (count) => {
     13: ["رئیس مافیا", "مذاکره‌گر", "مافیای ساده", "مافیای ساده", "پزشک", "کارآگاه", "خبرنگار", "تک‌تیرانداز", "زره‌پوش", "شهروند ساده", "شهروند ساده", "شهروند ساده", "شهروند ساده"],
     14: ["رئیس مافیا", "مذاکره‌گر", "مافیای ساده", "مافیای ساده", "پزشک", "کارآگاه", "خبرنگار", "تک‌تیرانداز", "زره‌پوش", "کنستانتین", "شهروند ساده", "شهروند ساده", "شهروند ساده", "شهروند ساده"]
   };
-  return rolesByCount[count] || [];
+  
+  // Sort roles to ensure mafia roles come first
+  const roles = rolesByCount[count] || [];
+  const mafiaRoles = roles.filter(role => role.includes('مافیا') || role.includes('مذاکره‌گر'));
+  const citizenRoles = roles.filter(role => !role.includes('مافیا') && !role.includes('مذاکره‌گر'));
+  
+  return [...mafiaRoles, ...citizenRoles];
 };
 
 export default GameControls;
