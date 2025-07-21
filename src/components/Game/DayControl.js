@@ -189,53 +189,87 @@ const DayControl = ({ currentRoles, assignments }) => {
                     اخراج
                   </button>
                 </div>
-                {selectedPlayer && (
-                  <div className="mt-2">
-                    <small className="text-muted">
-                      انتخاب شده: <strong>{allPlayers.find(p => p.id === selectedPlayer)?.name}</strong>
-                      <button 
-                        className="btn btn-sm btn-outline-secondary ms-2"
-                        onClick={() => setSelectedPlayer(null)}
-                        style={{ padding: '0.1rem 0.3rem', fontSize: '0.7rem' }}
-                      >
-                        لغو
-                      </button>
-                    </small>
-                  </div>
-                )}
               </div>
             </div>
           </div>
 
-          {/* Compact Game Stats */}
+          {/* Enhanced Game Statistics Grid */}
           <div className="row mb-3">
-            <div className="col-md-4">
-              <div className="card bg-success text-white">
-                <div className="card-body text-center py-2">
-                  <div className="d-flex align-items-center justify-content-center">
-                    <i className="bi bi-people-fill me-2"></i>
-                    <span className="fw-bold">زنده: {alivePlayers.length}</span>
+            {/* Main Stats Row */}
+            <div className="col-12 mb-2">
+              <div className="row g-2">
+                <div className="col-4">
+                  <div className="card bg-success text-white h-100">
+                    <div className="card-body text-center py-2">
+                      <i className="bi bi-people-fill fs-5 mb-1"></i>
+                      <div className="fw-bold">{alivePlayers.length}</div>
+                      <small style={{ fontSize: '0.7rem' }}>زنده</small>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-4">
+                  <div className="card bg-primary text-white h-100">
+                    <div className="card-body text-center py-2">
+                      <i className="bi bi-shield-fill fs-5 mb-1"></i>
+                      <div className="fw-bold">{allPlayers.filter(player => isMafiaRole(player.role)).length}</div>
+                      <small style={{ fontSize: '0.7rem' }}>مافیا</small>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-4">
+                  <div className="card bg-info text-white h-100">
+                    <div className="card-body text-center py-2">
+                      <i className="bi bi-people fs-5 mb-1"></i>
+                      <div className="fw-bold">{allPlayers.filter(player => !isMafiaRole(player.role)).length}</div>
+                      <small style={{ fontSize: '0.7rem' }}>شهروند</small>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="col-md-4">
-              <div className="card bg-danger text-white">
-                <div className="card-body text-center py-2">
-                  <div className="d-flex align-items-center justify-content-center">
-                    <i className="bi bi-person-x-fill me-2"></i>
-                    <span className="fw-bold">حذف شده: {deadPlayers.length}</span>
+            
+            {/* Team Breakdown Row */}
+            <div className="col-12">
+              <div className="card bg-light border-0">
+                <div className="card-body py-2">
+                  <div className="row g-2 text-center">
+                    <div className="col-6">
+                      <div className="d-flex align-items-center justify-content-center">
+                        <div className="badge bg-danger me-2" style={{ width: '12px', height: '12px', borderRadius: '50%' }}></div>
+                        <small className="text-muted">
+                          مافیا حذف شده: <strong>{deadPlayers.filter(player => isMafiaRole(player.role)).length}</strong>
+                        </small>
+                      </div>
+                    </div>
+                    <div className="col-6">
+                      <div className="d-flex align-items-center justify-content-center">
+                        <div className="badge bg-info me-2" style={{ width: '12px', height: '12px', borderRadius: '50%' }}></div>
+                        <small className="text-muted">
+                          شهروند حذف شده: <strong>{deadPlayers.filter(player => !isMafiaRole(player.role)).length}</strong>
+                        </small>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div className="card bg-info text-white">
-                <div className="card-body text-center py-2">
-                  <div className="d-flex align-items-center justify-content-center">
-                    <i className="bi bi-trophy-fill me-2"></i>
-                    <span className="fw-bold">کل: {allPlayers.length}</span>
-                  </div>
+                  {deadPlayers.length > 0 && (
+                    <div className="row mt-2">
+                      <div className="col-12">
+                        <div className="progress" style={{ height: '6px' }}>
+                          <div 
+                            className="progress-bar bg-danger" 
+                            style={{ 
+                              width: `${deadPlayers.filter(player => isMafiaRole(player.role)).length / Math.max(deadPlayers.length, 1) * 100}%` 
+                            }}
+                          ></div>
+                          <div 
+                            className="progress-bar bg-info" 
+                            style={{ 
+                              width: `${deadPlayers.filter(player => !isMafiaRole(player.role)).length / Math.max(deadPlayers.length, 1) * 100}%` 
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -282,6 +316,20 @@ const DayControl = ({ currentRoles, assignments }) => {
                     <i className="bi bi-person-x-fill me-2"></i>
                     حذف شده ({deadPlayers.length})
                   </h6>
+                  {deadPlayers.length > 0 && (
+                    <div className="mt-1">
+                      <small className="d-flex justify-content-between" style={{ fontSize: '0.7rem' }}>
+                        <span>
+                          <i className="bi bi-circle-fill me-1" style={{ color: 'rgba(255, 200, 200, 0.8)' }}></i>
+                          مافیا: {deadPlayers.filter(player => isMafiaRole(player.role)).length}
+                        </span>
+                        <span>
+                          <i className="bi bi-circle-fill me-1" style={{ color: 'rgba(200, 230, 255, 0.8)' }}></i>
+                          شهروند: {deadPlayers.filter(player => !isMafiaRole(player.role)).length}
+                        </span>
+                      </small>
+                    </div>
+                  )}
                 </div>
                 <div className="card-body p-2" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
                   {deadPlayers.length > 0 ? (
