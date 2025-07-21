@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { roleIcons } from '../../constants/gameConstants';
 
 const DayControl = ({ currentRoles, assignments }) => {
@@ -11,6 +11,22 @@ const DayControl = ({ currentRoles, assignments }) => {
   const [showTrialVoteModal, setShowTrialVoteModal] = useState(false);
   const [trialVotingPlayer, setTrialVotingPlayer] = useState(null);
   const [trialResult, setTrialResult] = useState(null); // Store trial processing result
+  
+  // Challenge system states
+  const [maxChallenges, setMaxChallenges] = useState(2); // Default 2 challenges per player
+  const [playerChallenges, setPlayerChallenges] = useState({}); // Track how many challenges each player has received
+  const [challengeGivers, setChallengeGivers] = useState({}); // Track who gave challenges to each player
+  const [playersWhoSpoke, setPlayersWhoSpoke] = useState(new Set()); // Track players who have already spoken
+  const [showChallengeModal, setShowChallengeModal] = useState(false);
+  const [challengingPlayer, setChallengingPlayer] = useState(null); // Player who is giving the challenge
+  
+  // Challenge timer states
+  const [challengeTimer, setChallengeTimer] = useState(null); // Current timer state
+  const [challengePhase, setChallengePhase] = useState(null); // 'waiting' or 'speaking'
+  const [challengedPlayer, setChallengedPlayer] = useState(null); // Player who received the challenge
+  const [originalChallenger, setOriginalChallenger] = useState(null); // Player who originally gave the challenge (the one who should speak)
+  const [timeRemaining, setTimeRemaining] = useState(0); // Seconds remaining
+  const [isPaused, setIsPaused] = useState(false); // Timer pause state
 
   // Get all players with their roles and names, ordered by selection sequence
   const allPlayers = currentRoles.map((role, index) => {
@@ -46,6 +62,15 @@ const DayControl = ({ currentRoles, assignments }) => {
 
   const alivePlayers = allPlayers.filter(player => player.isAlive);
   const deadPlayers = allPlayers.filter(player => !player.isAlive);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (challengeTimer) {
+        clearInterval(challengeTimer);
+      }
+    };
+  }, [challengeTimer]);
 
   const eliminatePlayer = (playerId) => {
     setEliminatedPlayers(prev => new Set([...prev, playerId]));
@@ -141,6 +166,260 @@ const DayControl = ({ currentRoles, assignments }) => {
     setTrialResult(null);
   };
 
+  // Challenge system functions
+  const getAvailableChallengees = (challengerId) => {
+    return alivePlayers.filter(player => {
+      // Can't challenge yourself
+      if (player.id === challengerId) return false;
+      
+      // Check if player has reached challenge limit (removed speaking restriction)
+      const challengesReceived = playerChallenges[player.id] || 0;
+      return challengesReceived < maxChallenges;
+    });
+  };
+
+  const openChallengeModal = (player) => {
+    setChallengingPlayer(player);
+    setShowChallengeModal(true);
+  };
+
+  const playAlarmSound = () => {
+    try {
+      const audio = new Audio('/alarm.mp3');
+      audio.play().catch(error => {
+        console.log('Could not play alarm sound:', error);
+      });
+    } catch (error) {
+      console.log('Audio not available:', error);
+    }
+  };
+
+  const startChallengeTimer = (challengeeId, challengerName, challengeeName) => {
+    // Clear any existing timer
+    if (challengeTimer) {
+      clearInterval(challengeTimer);
+    }
+
+    const challengedPlayerObj = alivePlayers.find(p => p.id === challengeeId);
+    const challengerPlayerObj = alivePlayers.find(p => p.name === challengerName);
+    
+    setChallengedPlayer(challengedPlayerObj);
+    setOriginalChallenger(challengerPlayerObj); // Track the original challenger
+    setChallengePhase('waiting');
+    setTimeRemaining(30);
+    setIsPaused(false);
+
+    const timer = setInterval(() => {
+      setTimeRemaining(prev => {
+        if (prev <= 1) {
+          // Time's up for waiting phase
+          clearInterval(timer);
+          playAlarmSound();
+          
+          // Transition to speaking phase
+          setChallengePhase('speaking');
+          setIsPaused(false);
+          
+          // Set speaking time and start speaking timer immediately
+          setTimeout(() => {
+            setTimeRemaining(60);
+            
+            const speakingTimer = setInterval(() => {
+              setTimeRemaining(prev => {
+                if (prev <= 1) {
+                  // Speaking time is up - mark the ORIGINAL CHALLENGER as having spoken
+                  clearInterval(speakingTimer);
+                  playAlarmSound();
+                  
+                  // Mark the original challenger (not the challengee) as having spoken
+                  if (originalChallenger) {
+                    setPlayersWhoSpoke(prev => new Set([...prev, originalChallenger.id]));
+                  }
+                  
+                  setChallengeTimer(null);
+                  setChallengePhase(null);
+                  setChallengedPlayer(null);
+                  setOriginalChallenger(null);
+                  setIsPaused(false);
+                  return 0;
+                }
+                return prev - 1;
+              });
+            }, 1000);
+            
+            setChallengeTimer(speakingTimer);
+          }, 100); // Small delay to ensure state updates
+          
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    setChallengeTimer(timer);
+  };
+
+  const pauseTimer = () => {
+    if (challengeTimer && !isPaused) {
+      clearInterval(challengeTimer);
+      setChallengeTimer(null);
+      setIsPaused(true);
+    }
+  };
+
+  const resumeTimer = () => {
+    if (isPaused && challengePhase) {
+      setIsPaused(false);
+      
+      const timer = setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            playAlarmSound();
+            
+            if (challengePhase === 'waiting') {
+              // Transition to speaking phase
+              setChallengePhase('speaking');
+              setIsPaused(false);
+              
+              // Set speaking time and start speaking timer immediately
+              setTimeout(() => {
+                setTimeRemaining(60);
+                
+                const speakingTimer = setInterval(() => {
+                  setTimeRemaining(prev => {
+                    if (prev <= 1) {
+                      // Speaking time is up - mark the ORIGINAL CHALLENGER as having spoken
+                      clearInterval(speakingTimer);
+                      playAlarmSound();
+                      
+                      // Mark the original challenger (not the challengee) as having spoken
+                      if (originalChallenger) {
+                        setPlayersWhoSpoke(prev => new Set([...prev, originalChallenger.id]));
+                      }
+                      
+                      setChallengeTimer(null);
+                      setChallengePhase(null);
+                      setChallengedPlayer(null);
+                      setOriginalChallenger(null);
+                      setIsPaused(false);
+                      return 0;
+                    }
+                    return prev - 1;
+                  });
+                }, 1000);
+                
+                setChallengeTimer(speakingTimer);
+              }, 100); // Small delay to ensure state updates
+              
+              return 0;
+            } else {
+              // Speaking time is up
+              setChallengeTimer(null);
+              setChallengePhase(null);
+              setChallengedPlayer(null);
+              setIsPaused(false);
+              return 0;
+            }
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      setChallengeTimer(timer);
+    }
+  };
+
+  const stopChallengeTimer = () => {
+    if (challengeTimer) {
+      clearInterval(challengeTimer);
+      setChallengeTimer(null);
+    }
+    
+    // Check if we're in waiting phase and should transition to speaking
+    if (challengePhase === 'waiting') {
+      playAlarmSound();
+      
+      // Transition to speaking phase
+      setChallengePhase('speaking');
+      setIsPaused(false);
+      
+      // Set speaking time and start speaking timer immediately
+      setTimeout(() => {
+        setTimeRemaining(60);
+        
+        const speakingTimer = setInterval(() => {
+          setTimeRemaining(prev => {
+            if (prev <= 1) {
+              // Speaking time is up - mark the ORIGINAL CHALLENGER as having spoken
+              clearInterval(speakingTimer);
+              playAlarmSound();
+              
+              // Mark the original challenger (not the challengee) as having spoken
+              if (originalChallenger) {
+                setPlayersWhoSpoke(prev => new Set([...prev, originalChallenger.id]));
+              }
+              
+              setChallengeTimer(null);
+              setChallengePhase(null);
+              setChallengedPlayer(null);
+              setOriginalChallenger(null);
+              setIsPaused(false);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+        
+        setChallengeTimer(speakingTimer);
+      }, 100); // Small delay to ensure state updates
+    } else {
+      // We're in speaking phase or no phase - end everything
+      if (challengePhase) {
+        playAlarmSound();
+        
+        // If we're ending during speaking phase, mark the ORIGINAL CHALLENGER as having spoken
+        if (challengePhase === 'speaking' && originalChallenger) {
+          setPlayersWhoSpoke(prev => new Set([...prev, originalChallenger.id]));
+        }
+      }
+      
+      setChallengePhase(null);
+      setChallengedPlayer(null);
+      setOriginalChallenger(null);
+      setTimeRemaining(0);
+      setIsPaused(false);
+    }
+  };
+
+  const giveChallenge = (challengeeId) => {
+    const challengee = alivePlayers.find(p => p.id === challengeeId);
+    
+    setPlayerChallenges(prev => ({
+      ...prev,
+      [challengeeId]: (prev[challengeeId] || 0) + 1
+    }));
+    
+    // Track who gave the challenge
+    setChallengeGivers(prev => ({
+      ...prev,
+      [challengeeId]: [...(prev[challengeeId] || []), challengingPlayer.name]
+    }));
+    
+    // Start the challenge timer
+    startChallengeTimer(challengeeId, challengingPlayer.name, challengee.name);
+    
+    // Keep modal open but update it to show timer
+    setChallengingPlayer(null);
+  };
+
+  const resetChallenges = () => {
+    setPlayerChallenges({});
+    setChallengeGivers({});
+    setPlayersWhoSpoke(new Set()); // Reset players who have spoken
+    stopChallengeTimer();
+  };
+
   // Handle trial result processing
   const handleProcessTrialResults = () => {
     const result = processTrialResults();
@@ -221,11 +500,11 @@ const DayControl = ({ currentRoles, assignments }) => {
     }
   };
 
-  const PlayerCard = ({ player, onEliminate, onRevive, showVoting, showTrialVoting }) => (
+  const PlayerCard = ({ player, onEliminate, onRevive, showVoting, showTrialVoting, showChallenges }) => (
     <div 
       className={`card mb-2 ${!player.isAlive ? 'bg-light' : ''}`}
       style={{ 
-        cursor: 'pointer',
+        cursor: (showVoting || (showChallenges && !playersWhoSpoke.has(player.id))) ? 'pointer' : 'default',
         opacity: player.isAlive ? 1 : 0.6,
         transition: 'all 0.2s ease',
         backgroundColor: player.isAlive ? getRoleBackgroundColor(player.role) : undefined
@@ -233,6 +512,8 @@ const DayControl = ({ currentRoles, assignments }) => {
       onClick={() => {
         if (showVoting) {
           openVoteModal(player);
+        } else if (showChallenges && !playersWhoSpoke.has(player.id)) {
+          openChallengeModal(player);
         }
       }}
     >
@@ -250,10 +531,29 @@ const DayControl = ({ currentRoles, assignments }) => {
               }}
             />
           </div>
-          <div className={showVoting || showTrialVoting ? "col-6" : "col-10"}>
+          <div className={showVoting || showTrialVoting || showChallenges ? "col-6" : "col-10"}>
             <div className="mb-0 fw-bold" style={{ fontSize: '0.9rem' }}>{player.name}</div>
             <small className="text-muted" style={{ fontSize: '0.75rem' }}>{player.role}</small>
             {!player.isAlive && <span className="badge bg-danger ms-1" style={{ fontSize: '0.6rem' }}>حذف شده</span>}
+            {showChallenges && (
+              <div className="mt-1">
+                <span className="badge bg-warning text-dark ms-1" style={{ fontSize: '0.6rem' }}>
+                  چالش: {playerChallenges[player.id] || 0}/{maxChallenges}
+                </span>
+                {playersWhoSpoke.has(player.id) && (
+                  <span className="badge bg-success ms-1" style={{ fontSize: '0.6rem' }}>
+                    صحبت کرده
+                  </span>
+                )}
+                {challengeGivers[player.id] && challengeGivers[player.id].length > 0 && (
+                  <div className="mt-1">
+                    <small className="text-muted" style={{ fontSize: '0.65rem' }}>
+                      از: {challengeGivers[player.id].join('، ')}
+                    </small>
+                  </div>
+                )}
+              </div>
+            )}
             {showVoting && playerVotes[player.id] && (
               <span className="badge bg-info ms-1" style={{ fontSize: '0.6rem' }}>
                 {playerVotes[player.id]} رای
@@ -298,6 +598,24 @@ const DayControl = ({ currentRoles, assignments }) => {
                   <i className="bi bi-person-x"></i>
                 </button>
               </div>
+            </div>
+          )}
+          {showChallenges && (
+            <div className="col-4 text-end">
+              <button 
+                className={`btn btn-sm ${playersWhoSpoke.has(player.id) ? 'btn-secondary' : 'btn-outline-warning'}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!playersWhoSpoke.has(player.id)) {
+                    openChallengeModal(player);
+                  }
+                }}
+                disabled={playersWhoSpoke.has(player.id)}
+                style={{ padding: '0.25rem 0.5rem' }}
+                title={playersWhoSpoke.has(player.id) ? "این بازیکن قبلاً صحبت کرده" : "دادن چالش"}
+              >
+                <i className={`bi ${playersWhoSpoke.has(player.id) ? 'bi-check-circle' : 'bi-lightning'}`}></i>
+              </button>
             </div>
           )}
           {showVoting && (
@@ -405,6 +723,55 @@ const DayControl = ({ currentRoles, assignments }) => {
                           style={{ padding: '0.1rem 0.3rem', fontSize: '0.7rem' }}
                         >
                           پاک کردن رای‌ها
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Discussion/Challenge Info Row */}
+            {currentPhase === 'discussion' && (
+              <div className="col-12 mb-2">
+                <div className="card bg-primary text-white">
+                  <div className="card-body py-2">
+                    <div className="row text-center align-items-center">
+                      <div className="col-3">
+                        <small className="fw-bold">
+                          حداکثر چالش: {maxChallenges}
+                        </small>
+                      </div>
+                      <div className="col-3">
+                        <div className="d-flex align-items-center justify-content-center">
+                          <button 
+                            className="btn btn-sm btn-outline-light me-1"
+                            onClick={() => setMaxChallenges(Math.max(1, maxChallenges - 1))}
+                            style={{ padding: '0.1rem 0.3rem', fontSize: '0.6rem', minWidth: '20px' }}
+                          >
+                            -
+                          </button>
+                          <button 
+                            className="btn btn-sm btn-outline-light"
+                            onClick={() => setMaxChallenges(maxChallenges + 1)}
+                            style={{ padding: '0.1rem 0.3rem', fontSize: '0.6rem', minWidth: '20px' }}
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                      <div className="col-3">
+                        <small className="fw-bold">
+                          صحبت کردند: {playersWhoSpoke.size}
+                        </small>
+                      </div>
+                      <div className="col-3">
+                        <button 
+                          className="btn btn-sm btn-outline-light"
+                          onClick={resetChallenges}
+                          style={{ padding: '0.1rem 0.3rem', fontSize: '0.7rem' }}
+                        >
+                          پاک کردن چالش‌ها
                         </button>
                       </div>
                     </div>
@@ -592,6 +959,7 @@ const DayControl = ({ currentRoles, assignments }) => {
                           player={player}
                           onEliminate={eliminatePlayer}
                           showVoting={currentPhase === 'voting'}
+                          showChallenges={currentPhase === 'discussion'}
                         />
                       ))
                     ) : (
@@ -782,6 +1150,197 @@ const DayControl = ({ currentRoles, assignments }) => {
                   <small>کمتر از این تعداد = تبرئه</small>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Challenge Modal */}
+      {showChallengeModal && (
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content" style={{ direction: 'rtl' }}>
+              {challengePhase ? (
+                // Timer active - show countdown
+                <>
+                  <div className={`modal-header ${challengePhase === 'waiting' ? 'bg-warning text-dark' : 'bg-success text-white'}`}>
+                    <h5 className="modal-title">
+                      {challengePhase === 'waiting' ? 
+                        `⏳ در حال آماده‌سازی - ${challengedPlayer?.name}` : 
+                        `🎤 نوبت صحبت - ${originalChallenger?.name}`
+                      }
+                    </h5>
+                    <button 
+                      type="button" 
+                      className={`btn-close ${challengePhase === 'speaking' ? 'btn-close-white' : ''}`}
+                      onClick={() => {
+                        stopChallengeTimer();
+                        setShowChallengeModal(false);
+                      }}
+                    ></button>
+                  </div>
+                  <div className="modal-body text-center">
+                    <div className="mb-4">
+                      {challengePhase === 'waiting' ? (
+                        // Show challengee during waiting phase
+                        <>
+                          <img 
+                            src={roleIcons[challengedPlayer?.role] || "/images/roles/unknown.png"} 
+                            alt={challengedPlayer?.role} 
+                            className="rounded"
+                            style={{ width: '80px', height: '80px' }}
+                          />
+                          <div className="mt-2">
+                            <h4>{challengedPlayer?.name}</h4>
+                            <small className="text-muted">{challengedPlayer?.role}</small>
+                          </div>
+                        </>
+                      ) : (
+                        // Show original challenger during speaking phase
+                        <>
+                          <img 
+                            src={roleIcons[originalChallenger?.role] || "/images/roles/unknown.png"} 
+                            alt={originalChallenger?.role} 
+                            className="rounded"
+                            style={{ width: '80px', height: '80px' }}
+                          />
+                          <div className="mt-2">
+                            <h4>{originalChallenger?.name}</h4>
+                            <small className="text-muted">{originalChallenger?.role}</small>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                    
+                    <div className="mb-4">
+                      <div 
+                        className={`display-1 fw-bold ${challengePhase === 'waiting' ? 'text-warning' : 'text-success'}`}
+                        style={{ fontSize: '4rem' }}
+                      >
+                        {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60).toString().padStart(2, '0')}
+                      </div>
+                      {isPaused && (
+                        <div className="alert alert-info mb-3">
+                          <i className="bi bi-pause-fill me-2"></i>
+                          <strong>تایمر متوقف شده است</strong>
+                        </div>
+                      )}
+                      <div className="progress mb-3" style={{ height: '10px' }}>
+                        <div 
+                          className={`progress-bar ${challengePhase === 'waiting' ? 'bg-warning' : 'bg-success'} ${isPaused ? 'progress-bar-striped' : ''}`}
+                          style={{ 
+                            width: `${(timeRemaining / (challengePhase === 'waiting' ? 30 : 60)) * 100}%`,
+                            transition: isPaused ? 'none' : 'width 1s linear'
+                          }}
+                        ></div>
+                      </div>
+                      <p className="lead">
+                        {isPaused ? 
+                          '⏸️ تایمر متوقف شده است' :
+                          challengePhase === 'waiting' ? 
+                            '⏰ در حال آماده‌سازی برای صحبت...' : 
+                            '🎯 زمان صحبت! می‌توانید شروع کنید.'
+                        }
+                      </p>
+                    </div>
+
+                    <div className="d-grid gap-2">
+                      {isPaused ? (
+                        <button 
+                          className="btn btn-lg btn-success"
+                          onClick={resumeTimer}
+                        >
+                          ▶️ ادامه تایمر
+                        </button>
+                      ) : (
+                        <button 
+                          className="btn btn-lg btn-info"
+                          onClick={pauseTimer}
+                        >
+                          ⏸️ توقف موقت تایمر
+                        </button>
+                      )}
+                      <button 
+                        className="btn btn-lg btn-danger"
+                        onClick={() => {
+                          stopChallengeTimer();
+                          // Only close modal if we're ending the entire challenge (not transitioning)
+                          if (challengePhase === 'speaking') {
+                            setShowChallengeModal(false);
+                          }
+                        }}
+                      >
+                        {challengePhase === 'waiting' ? '⏭️ شروع صحبت' : '⏹️ پایان چالش'}
+                      </button>
+                    </div>
+                  </div>
+                </>
+              ) : challengingPlayer ? (
+                // Normal challenge selection
+                <>
+                  <div className="modal-header bg-warning text-dark">
+                    <h5 className="modal-title">دادن چالش از طرف {challengingPlayer.name}</h5>
+                    <button 
+                      type="button" 
+                      className="btn-close" 
+                      onClick={() => setShowChallengeModal(false)}
+                    ></button>
+                  </div>
+                  <div className="modal-body">
+                    <div className="text-center mb-3">
+                      <img 
+                        src={roleIcons[challengingPlayer.role] || "/images/roles/unknown.png"} 
+                        alt={challengingPlayer.role} 
+                        className="rounded"
+                        style={{ width: '64px', height: '64px' }}
+                      />
+                      <div className="mt-2">
+                        <h6>{challengingPlayer.name}</h6>
+                        <small className="text-muted">{challengingPlayer.role}</small>
+                      </div>
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">انتخاب شخص برای دریافت چالش:</label>
+                      <div className="d-grid gap-2">
+                        {getAvailableChallengees(challengingPlayer.id).length > 0 ? (
+                          getAvailableChallengees(challengingPlayer.id).map(player => (
+                            <button
+                              key={player.id}
+                              type="button"
+                              className="btn btn-outline-warning d-flex justify-content-between align-items-center"
+                              onClick={() => giveChallenge(player.id)}
+                            >
+                              <span>
+                                <img 
+                                  src={roleIcons[player.role] || "/images/roles/unknown.png"} 
+                                  alt={player.role} 
+                                  className="rounded me-2"
+                                  style={{ width: '24px', height: '24px' }}
+                                />
+                                {player.name}
+                              </span>
+                              <span className="badge bg-warning text-dark">
+                                {playerChallenges[player.id] || 0}/{maxChallenges}
+                              </span>
+                            </button>
+                          ))
+                        ) : (
+                          <div className="alert alert-info text-center">
+                            <i className="bi bi-info-circle fs-4"></i>
+                            <p className="mt-2 mb-0">هیچ بازیکنی برای دریافت چالش موجود نیست!</p>
+                            <small className="text-muted">همه بازیکنان حداکثر چالش خود را دریافت کرده‌اند.</small>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="alert alert-info" style={{ fontSize: '0.8rem' }}>
+                      <strong>حداکثر چالش برای هر بازیکن: {maxChallenges}</strong>
+                      <br />
+                      <small>پس از انتخاب: ۳۰ ثانیه آماده‌سازی + ۶۰ ثانیه صحبت</small>
+                    </div>
+                  </div>
+                </>
+              ) : null}
             </div>
           </div>
         </div>
