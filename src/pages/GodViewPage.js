@@ -17,9 +17,6 @@ const GodViewPage = ({ currentRoles, assignments }) => {
             <Link to="/" className="btn btn-outline-primary btn-sm">
               <i className="bi bi-arrow-left"></i>
             </Link>
-
-
-            {/* <div style={{ width: '32px' }}></div> */}
           </div>
           
           {/* Content */}
