@@ -5,7 +5,6 @@ import './GodViewDisplay.css';
 const roleIcons = {
   "رئیس مافیا": "/images/roles/mafia-boss.png",
   "مذاکره‌گر": "/images/roles/negotiator.png", 
-  "جوکر": "/images/roles/joker.png",
   "مافیای ساده": "/images/roles/simple-mafia.png",
   "پزشک": "/images/roles/doctor.png",
   "کارآگاه": "/images/roles/detective.png",
@@ -25,7 +24,7 @@ const GodViewDisplay = ({ currentRoles, assignments }) => {
     const name = (entry && entry.name) ? entry.name : "بازیکن " + (i + 1);
     const pair = { name: name, role: role };
 
-    if (["رئیس مافیا", "مذاکره‌گر", "جوکر", "مافیای ساده"].includes(role)) {
+    if (["رئیس مافیا", "مذاکره‌گر", "مافیای ساده"].includes(role)) {
       mafiaRoles.push(pair);
     } else {
       citizenRoles.push(pair);
@@ -35,7 +34,6 @@ const GodViewDisplay = ({ currentRoles, assignments }) => {
   const getPriority = (role) => {
     const priorities = {
       "رئیس مافیا": 100,
-      "جوکر": 90,
       "مذاکره‌گر": 85,
       "مافیای ساده": 80,
       "پزشک": 100,
