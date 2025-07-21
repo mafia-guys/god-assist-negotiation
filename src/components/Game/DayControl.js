@@ -68,15 +68,6 @@ const DayControl = ({ currentRoles, assignments }) => {
     }
   };
 
-  const getPhaseText = (phase) => {
-    switch (phase) {
-      case 'discussion': return 'بحث';
-      case 'voting': return 'رای‌گیری';
-      case 'trial': return 'محاکمه';
-      default: return 'نامشخص';
-    }
-  };
-
   // Helper function to determine if a role is Mafia or Citizen
   const isMafiaRole = (role) => {
     return ["رئیس مافیا", "مذاکره‌گر", "مافیای ساده"].includes(role);
