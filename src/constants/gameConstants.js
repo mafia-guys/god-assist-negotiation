@@ -1,16 +1,16 @@
 // Shared constants for the Mafia game application
 
 export const roleIcons = {
-  "رئیس مافیا": "/images/roles/mafia-boss.png",
-  "مذاکره‌گر": "/images/roles/negotiator.png", 
-  "مافیای ساده": "/images/roles/simple-mafia.png",
-  "پزشک": "/images/roles/doctor.png",
-  "کارآگاه": "/images/roles/detective.png",
-  "خبرنگار": "/images/roles/reporter.png",
-  "تک‌تیرانداز": "/images/roles/sniper.png",
-  "زره‌پوش": "/images/roles/armored.png",
-  "کنستانتین": "/images/roles/constantine.png",
-  "شهروند ساده": "/images/roles/simple-citizen.png"
+  "رئیس مافیا": "/images/roles/mafia-boss.jpg",
+  "مذاکره‌گر": "/images/roles/negotiator.jpg", 
+  "مافیای ساده": "/images/roles/simple-mafia.jpg",
+  "پزشک": "/images/roles/doctor.jpg",
+  "کارآگاه": "/images/roles/detective.jpg",
+  "خبرنگار": "/images/roles/reporter.jpg",
+  "تک‌تیرانداز": "/images/roles/sniper.jpg",
+  "زره‌پوش": "/images/roles/armored.jpg",
+  "کنستانتین": "/images/roles/constantine.jpg",
+  "شهروند ساده": "/images/roles/simple-citizen.jpg"
 };
 
 export const rolesByCount = {
