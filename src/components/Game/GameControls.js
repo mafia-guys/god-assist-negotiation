@@ -5,7 +5,7 @@ const GameControls = ({ playerCount, setPlayerCount, startGame }) => {
 
   return (
     <div className="container">
-      <div className="row justify-content-center">
+      <div className="row justify-content-center mt-4">
         <div className="col-lg-8">
           {/* Welcome Header */}
           <div className="text-center mb-5">

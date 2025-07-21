@@ -9,18 +9,16 @@ const DayControlPage = ({ currentRoles, assignments }) => {
       <div className="container py-2">
         <div className="row justify-content-center">
           <div className="col-lg-10">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-              <Link to="/god-view" className="btn btn-outline-primary btn-sm">
-                <i className="bi bi-arrow-right me-1"></i>
-                بازگشت به لیست نهایی
-              </Link>
-              
+            <div className="d-flex justify-content-between align-items-center">
               <h4 className="text-center mb-0">
                 <i className="bi bi-sun-fill me-2 text-warning"></i>
                 کنترل روز بازی
               </h4>
               
-              <div style={{ width: '120px' }}></div>
+              <Link to="/god-view" className="btn btn-outline-primary btn-sm">
+                <i className="bi bi-arrow-left me-1"></i>
+              </Link>
+
             </div>
           </div>
         </div>

@@ -31,7 +31,7 @@ const Navigation = ({ gameStarted = false }) => {
   }, []);
 
   return (
-    <nav ref={navbarRef} className="navbar navbar-expand-lg navbar-dark bg-secondary mb-4">
+    <nav ref={navbarRef} className="navbar navbar-expand-lg navbar-dark bg-secondary">
       <div className="container">
         <Link className="navbar-brand" to="/">
           <img 

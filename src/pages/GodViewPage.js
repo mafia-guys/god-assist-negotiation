@@ -9,16 +9,17 @@ const GodViewPage = ({ currentRoles, assignments }) => {
         <div className="col-lg-10">
           {/* Header */}
           <div className="d-flex justify-content-between align-items-center mb-2">
-            <Link to="/" className="btn btn-outline-primary btn-sm">
-              <i className="bi bi-arrow-right"></i>
-            </Link>
             
             <h4 className="text-center mb-0">
-              <i className="bi bi-eye-fill me-2 text-primary"></i>
               لیست نهایی بازیکنان
             </h4>
-            
-            <div style={{ width: '32px' }}></div>
+
+            <Link to="/" className="btn btn-outline-primary btn-sm">
+              <i className="bi bi-arrow-left"></i>
+            </Link>
+
+
+            {/* <div style={{ width: '32px' }}></div> */}
           </div>
           
           {/* Content */}

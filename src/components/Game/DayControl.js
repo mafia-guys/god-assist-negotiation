@@ -68,10 +68,10 @@ const DayControl = ({ currentRoles, assignments }) => {
 
   const getPhaseText = (phase) => {
     switch (phase) {
-      case 'discussion': return 'بحث و گفتگو';
+      case 'discussion': return 'بحث';
       case 'voting': return 'رای‌گیری';
       case 'trial': return 'محاکمه';
-      case 'expulsion': return 'اخراج از شهر';
+      case 'expulsion': return 'اخراج';
       default: return 'نامشخص';
     }
   };
@@ -92,7 +92,7 @@ const DayControl = ({ currentRoles, assignments }) => {
 
   const PlayerCard = ({ player, onEliminate, onRevive, isSelected, onSelect, showActions }) => (
     <div 
-      className={`card mb-3 ${isSelected ? 'border-warning' : ''} ${!player.isAlive ? 'bg-light' : ''}`}
+      className={`card mb-2 ${isSelected ? 'border-warning' : ''} ${!player.isAlive ? 'bg-light' : ''}`}
       style={{ 
         cursor: 'pointer',
         opacity: player.isAlive ? 1 : 0.6,
@@ -102,7 +102,7 @@ const DayControl = ({ currentRoles, assignments }) => {
       }}
       onClick={() => onSelect && onSelect(player.id)}
     >
-      <div className="card-body p-3">
+      <div className="card-body p-2">
         <div className="row align-items-center">
           <div className="col-2">
             <img 
@@ -110,17 +110,17 @@ const DayControl = ({ currentRoles, assignments }) => {
               alt={player.role} 
               className="rounded"
               style={{ 
-                width: '40px', 
-                height: '40px', 
+                width: '32px', 
+                height: '32px', 
                 objectFit: 'contain'
               }}
             />
           </div>
           <div className={showActions ? "col-6" : "col-10"}>
-            <h6 className="mb-1 fw-bold">{player.name}</h6>
-            <small className="text-muted">{player.role}</small>
-            {!player.isAlive && <span className="badge bg-danger ms-2">حذف شده</span>}
-            {isSelected && <span className="badge bg-warning text-dark ms-2">انتخاب شده</span>}
+            <div className="mb-0 fw-bold" style={{ fontSize: '0.9rem' }}>{player.name}</div>
+            <small className="text-muted" style={{ fontSize: '0.75rem' }}>{player.role}</small>
+            {!player.isAlive && <span className="badge bg-danger ms-1" style={{ fontSize: '0.6rem' }}>حذف شده</span>}
+            {isSelected && <span className="badge bg-warning text-dark ms-1" style={{ fontSize: '0.6rem' }}>انتخاب شده</span>}
           </div>
           {showActions && (
             <div className="col-4 text-end">
@@ -131,6 +131,7 @@ const DayControl = ({ currentRoles, assignments }) => {
                     e.stopPropagation();
                     onEliminate(player.id);
                   }}
+                  style={{ padding: '0.25rem 0.5rem' }}
                 >
                   <i className="bi bi-x-circle"></i>
                 </button>
@@ -141,6 +142,7 @@ const DayControl = ({ currentRoles, assignments }) => {
                     e.stopPropagation();
                     onRevive(player.id);
                   }}
+                  style={{ padding: '0.25rem 0.5rem' }}
                 >
                   <i className="bi bi-arrow-clockwise"></i>
                 </button>
@@ -153,115 +155,104 @@ const DayControl = ({ currentRoles, assignments }) => {
   );
 
   return (
-    <div className="container py-4" style={{ direction: 'rtl' }}>
+    <div className="container py-2" style={{ direction: 'rtl' }}>
       <div className="row">
         <div className="col-12">
-          {/* Header */}
-          <div className="card shadow-sm mb-4">
-            <div className="card-body">
-              <div className="row align-items-center">
-                <div className="col-md-6">
-                  <h4 className="mb-0">
-                    <i className="bi bi-sun me-2 text-warning"></i>
-                    کنترل روز بازی
-                  </h4>
+          {/* Compact Header */}
+          <div className="card shadow-sm mb-3">
+            <div className="card-body p-3">
+              <div className="text-center">
+                {/* Phase buttons - more compact */}
+                <div className="btn-group btn-group-sm" role="group">
+                  <button 
+                    className={`btn btn-${currentPhase === 'discussion' ? getPhaseColor('discussion') : 'outline-' + getPhaseColor('discussion')}`}
+                    onClick={() => setCurrentPhase('discussion')}
+                  >
+                    بحث
+                  </button>
+                  <button 
+                    className={`btn btn-${currentPhase === 'voting' ? getPhaseColor('voting') : 'outline-' + getPhaseColor('voting')}`}
+                    onClick={() => setCurrentPhase('voting')}
+                  >
+                    رای
+                  </button>
+                  <button 
+                    className={`btn btn-${currentPhase === 'trial' ? getPhaseColor('trial') : 'outline-' + getPhaseColor('trial')}`}
+                    onClick={() => setCurrentPhase('trial')}
+                  >
+                    محاکمه
+                  </button>
+                  <button 
+                    className={`btn btn-${currentPhase === 'expulsion' ? getPhaseColor('expulsion') : 'outline-' + getPhaseColor('expulsion')}`}
+                    onClick={() => setCurrentPhase('expulsion')}
+                  >
+                    اخراج
+                  </button>
                 </div>
-                <div className="col-md-6 text-end">
-                  <div className="btn-group" role="group">
-                    <button 
-                      className={`btn btn-${currentPhase === 'discussion' ? getPhaseColor('discussion') : 'outline-' + getPhaseColor('discussion')}`}
-                      onClick={() => setCurrentPhase('discussion')}
-                    >
-                      بحث
-                    </button>
-                    <button 
-                      className={`btn btn-${currentPhase === 'voting' ? getPhaseColor('voting') : 'outline-' + getPhaseColor('voting')}`}
-                      onClick={() => setCurrentPhase('voting')}
-                    >
-                      رای‌گیری
-                    </button>
-                    <button 
-                      className={`btn btn-${currentPhase === 'trial' ? getPhaseColor('trial') : 'outline-' + getPhaseColor('trial')}`}
-                      onClick={() => setCurrentPhase('trial')}
-                    >
-                      محاکمه
-                    </button>
-                    <button 
-                      className={`btn btn-${currentPhase === 'expulsion' ? getPhaseColor('expulsion') : 'outline-' + getPhaseColor('expulsion')}`}
-                      onClick={() => setCurrentPhase('expulsion')}
-                    >
-                      اخراج
-                    </button>
+                {selectedPlayer && (
+                  <div className="mt-2">
+                    <small className="text-muted">
+                      انتخاب شده: <strong>{allPlayers.find(p => p.id === selectedPlayer)?.name}</strong>
+                      <button 
+                        className="btn btn-sm btn-outline-secondary ms-2"
+                        onClick={() => setSelectedPlayer(null)}
+                        style={{ padding: '0.1rem 0.3rem', fontSize: '0.7rem' }}
+                      >
+                        لغو
+                      </button>
+                    </small>
                   </div>
-                </div>
-              </div>
-              
-              {/* Current Phase Info */}
-              <div className="row mt-3">
-                <div className="col-12">
-                  <div className={`alert alert-${getPhaseColor(currentPhase)} mb-0`}>
-                    <strong>مرحله فعلی: {getPhaseText(currentPhase)}</strong>
-                    {selectedPlayer && (
-                      <div className="mt-2">
-                        <i className="bi bi-person-check me-1"></i>
-                        بازیکن انتخاب شده: <strong>{allPlayers.find(p => p.id === selectedPlayer)?.name}</strong>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Game Stats */}
-          <div className="row mb-4">
+          {/* Compact Game Stats */}
+          <div className="row mb-3">
             <div className="col-md-4">
               <div className="card bg-success text-white">
-                <div className="card-body text-center">
-                  <h5 className="card-title">
+                <div className="card-body text-center py-2">
+                  <div className="d-flex align-items-center justify-content-center">
                     <i className="bi bi-people-fill me-2"></i>
-                    بازیکنان زنده
-                  </h5>
-                  <h2 className="mb-0">{alivePlayers.length}</h2>
+                    <span className="fw-bold">زنده: {alivePlayers.length}</span>
+                  </div>
                 </div>
               </div>
             </div>
             <div className="col-md-4">
               <div className="card bg-danger text-white">
-                <div className="card-body text-center">
-                  <h5 className="card-title">
+                <div className="card-body text-center py-2">
+                  <div className="d-flex align-items-center justify-content-center">
                     <i className="bi bi-person-x-fill me-2"></i>
-                    بازیکنان حذف شده
-                  </h5>
-                  <h2 className="mb-0">{deadPlayers.length}</h2>
+                    <span className="fw-bold">حذف شده: {deadPlayers.length}</span>
+                  </div>
                 </div>
               </div>
             </div>
             <div className="col-md-4">
               <div className="card bg-info text-white">
-                <div className="card-body text-center">
-                  <h5 className="card-title">
+                <div className="card-body text-center py-2">
+                  <div className="d-flex align-items-center justify-content-center">
                     <i className="bi bi-trophy-fill me-2"></i>
-                    کل بازیکنان
-                  </h5>
-                  <h2 className="mb-0">{allPlayers.length}</h2>
+                    <span className="fw-bold">کل: {allPlayers.length}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Players Section */}
+          {/* Players Section - More Compact */}
           <div className="row">
             {/* Alive Players */}
             <div className="col-md-8">
               <div className="card">
-                <div className="card-header bg-success text-white">
-                  <h5 className="mb-0">
+                <div className="card-header bg-success text-white py-2">
+                  <h6 className="mb-0">
                     <i className="bi bi-people-fill me-2"></i>
-                    بازیکنان زنده ({alivePlayers.length})
-                  </h5>
+                    زنده ({alivePlayers.length})
+                  </h6>
                 </div>
-                <div className="card-body" style={{ maxHeight: '500px', overflowY: 'auto' }}>
+                <div className="card-body p-2" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
                   {alivePlayers.length > 0 ? (
                     alivePlayers.map(player => (
                       <PlayerCard 
@@ -274,9 +265,9 @@ const DayControl = ({ currentRoles, assignments }) => {
                       />
                     ))
                   ) : (
-                    <div className="text-center py-4 text-muted">
-                      <i className="bi bi-emoji-frown fs-1"></i>
-                      <p className="mt-2">هیچ بازیکن زنده‌ای باقی نمانده!</p>
+                    <div className="text-center py-3 text-muted">
+                      <i className="bi bi-emoji-frown fs-4"></i>
+                      <p className="mt-1 mb-0 small">هیچ بازیکن زنده‌ای باقی نمانده!</p>
                     </div>
                   )}
                 </div>
@@ -286,13 +277,13 @@ const DayControl = ({ currentRoles, assignments }) => {
             {/* Dead Players */}
             <div className="col-md-4">
               <div className="card">
-                <div className="card-header bg-danger text-white">
-                  <h5 className="mb-0">
+                <div className="card-header bg-danger text-white py-2">
+                  <h6 className="mb-0">
                     <i className="bi bi-person-x-fill me-2"></i>
-                    بازیکنان حذف شده ({deadPlayers.length})
-                  </h5>
+                    حذف شده ({deadPlayers.length})
+                  </h6>
                 </div>
-                <div className="card-body" style={{ maxHeight: '500px', overflowY: 'auto' }}>
+                <div className="card-body p-2" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
                   {deadPlayers.length > 0 ? (
                     deadPlayers.map(player => (
                       <PlayerCard 
@@ -303,86 +294,11 @@ const DayControl = ({ currentRoles, assignments }) => {
                       />
                     ))
                   ) : (
-                    <div className="text-center py-4 text-muted">
-                      <i className="bi bi-emoji-smile fs-1"></i>
-                      <p className="mt-2">هنوز هیچ بازیکنی حذف نشده!</p>
+                    <div className="text-center py-3 text-muted">
+                      <i className="bi bi-emoji-smile fs-4"></i>
+                      <p className="mt-1 mb-0 small">هنوز هیچ بازیکنی حذف نشده!</p>
                     </div>
                   )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="row mt-4">
-            <div className="col-12">
-              <div className="card">
-                <div className="card-header">
-                  <h5 className="mb-0">
-                    <i className="bi bi-lightning-charge me-2"></i>
-                    اقدامات سریع
-                  </h5>
-                </div>
-                <div className="card-body">
-                  <div className="row text-center">
-                    <div className="col-md-2 col-6 mb-2">
-                      <button 
-                        className="btn btn-secondary w-100 btn-sm"
-                        onClick={() => setSelectedPlayer(null)}
-                      >
-                        <i className="bi bi-arrow-counterclockwise me-1"></i>
-                        لغو انتخاب
-                      </button>
-                    </div>
-                    <div className="col-md-2 col-6 mb-2">
-                      <button 
-                        className="btn btn-primary w-100 btn-sm"
-                        onClick={() => setCurrentPhase('discussion')}
-                      >
-                        <i className="bi bi-chat-dots me-1"></i>
-                        بحث
-                      </button>
-                    </div>
-                    <div className="col-md-2 col-6 mb-2">
-                      <button 
-                        className="btn btn-warning w-100 btn-sm"
-                        onClick={() => setCurrentPhase('voting')}
-                      >
-                        <i className="bi bi-hand-thumbs-up me-1"></i>
-                        رای‌گیری
-                      </button>
-                    </div>
-                    <div className="col-md-2 col-6 mb-2">
-                      <button 
-                        className="btn btn-danger w-100 btn-sm"
-                        onClick={() => setCurrentPhase('trial')}
-                      >
-                        <i className="bi bi-gavel me-1"></i>
-                        محاکمه
-                      </button>
-                    </div>
-                    <div className="col-md-2 col-6 mb-2">
-                      <button 
-                        className="btn btn-dark w-100 btn-sm"
-                        onClick={() => setCurrentPhase('expulsion')}
-                      >
-                        <i className="bi bi-door-open me-1"></i>
-                        اخراج
-                      </button>
-                    </div>
-                    <div className="col-md-2 col-6 mb-2">
-                      <button 
-                        className="btn btn-success w-100 btn-sm"
-                        onClick={() => {
-                          setCurrentPhase('discussion');
-                          setSelectedPlayer(null);
-                        }}
-                      >
-                        <i className="bi bi-arrow-repeat me-1"></i>
-                        دور جدید
-                      </button>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

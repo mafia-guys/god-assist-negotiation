@@ -13,7 +13,7 @@ const PlayerGrid = ({ playerCount, usedButtons, handleClick }) => {
   return (
     <div className="container">
       <div 
-        className="d-grid gap-1 mx-auto" 
+        className="d-grid gap-1 mx-auto mt-4" 
         style={{
           gridTemplateColumns: `repeat(${columns}, 1fr)`,
           maxWidth: '480px',
