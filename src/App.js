@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import { Navigation } from './components';
-import { GamePage, RolesPage, TimersPage, GodViewPage } from './pages';
+import { GamePage, RolesPage, TimersPage, GodViewPage, DayControlPage } from './pages';
 import { useGameLogic, useTimers } from './hooks';
 
 const App = () => {
@@ -86,6 +86,15 @@ const App = () => {
             path="/god-view" 
             element={
               <GodViewPage 
+                currentRoles={currentRoles}
+                assignments={assignments}
+              />
+            } 
+          />
+          <Route 
+            path="/day-control" 
+            element={
+              <DayControlPage 
                 currentRoles={currentRoles}
                 assignments={assignments}
               />

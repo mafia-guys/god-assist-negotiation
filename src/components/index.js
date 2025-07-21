@@ -1,5 +1,5 @@
 // Game components
-export { GameControls, PlayerGrid } from './Game';
+export { GameControls, PlayerGrid, DayControl } from './Game';
 
 // UI components
 export { Navigation, RoleDisplay } from './UI';

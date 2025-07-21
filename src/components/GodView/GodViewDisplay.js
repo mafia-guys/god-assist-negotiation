@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './GodViewDisplay.css';
 
 const roleIcons = {
@@ -70,6 +71,22 @@ const GodViewDisplay = ({ currentRoles, assignments }) => {
 
   return (
     <div style={{ direction: 'rtl' }}>
+      {/* Day Control Button */}
+      <div className="text-center mb-4">
+        <Link 
+          to="/day-control" 
+          className="btn btn-warning btn-lg px-4 py-2 shadow-sm"
+          style={{
+            fontSize: '1.1rem',
+            borderRadius: '10px',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          <i className="bi bi-sun-fill me-2"></i>
+          کنترل روز بازی
+        </Link>
+      </div>
+
       <div className="row g-2 align-items-start">
         {/* Mafia Team */}
         <div className="col-6">
