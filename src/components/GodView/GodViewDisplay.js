@@ -1,19 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { roleIcons } from '../../constants/gameConstants';
 import './GodViewDisplay.css';
-
-const roleIcons = {
-  "رئیس مافیا": "/images/roles/mafia-boss.png",
-  "مذاکره‌گر": "/images/roles/negotiator.png", 
-  "مافیای ساده": "/images/roles/simple-mafia.png",
-  "پزشک": "/images/roles/doctor.png",
-  "کارآگاه": "/images/roles/detective.png",
-  "خبرنگار": "/images/roles/reporter.png",
-  "تک‌تیرانداز": "/images/roles/sniper.png",
-  "زره‌پوش": "/images/roles/armored.png",
-  "کنستانتین": "/images/roles/constantine.png",
-  "شهروند ساده": "/images/roles/simple-citizen.png"
-};
 
 const GodViewDisplay = ({ currentRoles, assignments }) => {
   const mafiaRoles = [];

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { roleIcons } from '../../constants/gameConstants';
 
 const DayControl = ({ currentRoles, assignments }) => {
   const [eliminatedPlayers, setEliminatedPlayers] = useState(new Set());
@@ -86,10 +87,19 @@ const DayControl = ({ currentRoles, assignments }) => {
     >
       <div className="card-body p-3">
         <div className="row align-items-center">
-          <div className="col-1">
-            <span className="badge bg-secondary fs-6">{player.originalIndex}</span>
+          <div className="col-2">
+            <img 
+              src={roleIcons[player.role] || "/images/roles/unknown.png"} 
+              alt={player.role} 
+              className="rounded"
+              style={{ 
+                width: '40px', 
+                height: '40px', 
+                objectFit: 'contain'
+              }}
+            />
           </div>
-          <div className="col-7">
+          <div className="col-6">
             <h6 className="mb-1 fw-bold">{player.name}</h6>
             <small className="text-muted">{player.role}</small>
             {!player.isAlive && <span className="badge bg-danger ms-2">حذف شده</span>}
