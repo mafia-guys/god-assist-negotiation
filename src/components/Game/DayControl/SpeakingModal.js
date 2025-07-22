@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TIMER_CONSTANTS } from '../../constants/gameConstants';
+import { TIMER_CONSTANTS } from '../../../constants/gameConstants';
 
 const SpeakingModal = ({ 
   speaker, 

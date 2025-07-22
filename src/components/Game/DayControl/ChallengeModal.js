@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { TIMER_CONSTANTS } from '../../constants/gameConstants';
+import React, { useState, useEffect, useRef } from 'react';
+import { TIMER_CONSTANTS } from '../../../constants/gameConstants';
 
 const ChallengeModal = ({ 
   challenger, 
@@ -15,6 +15,9 @@ const ChallengeModal = ({
   const [isPaused, setIsPaused] = useState(false);
   const [timer, setTimer] = useState(null);
   const [selectedChallengee, setSelectedChallengee] = useState(null);
+  
+  // Use ref to store current challengee for timer callbacks
+  const challengeeRef = useRef(null);
 
   // Cleanup timer on unmount
   useEffect(() => {
@@ -58,17 +61,21 @@ const ChallengeModal = ({
     const newTimer = setInterval(() => {
       setTimeRemaining(prev => {
         if (prev <= 1) {
-          // Timer finished - close the popup
+          // Timer finished - use the same logic as manual finish
           playAlarmSound();
           clearInterval(newTimer);
           setTimer(null);
           
           // Only proceed if challengee is selected
-          if (selectedChallengee) {
-            // Call the parent's finish challenge handler without opening speaking modal
-            onFinishChallenge(challenger, selectedChallengee, true);
+          if (challengeeRef.current) {
+            // Call the parent directly with the current challengee
+            // Use setTimeout to move out of React's render cycle
+            setTimeout(() => {
+              onFinishChallenge(challenger, challengeeRef.current, true);
+            }, 0);
+          } else {
+            onClose(); // Close immediately if no challengee
           }
-          onClose(); // Close the popup
           return 0;
         }
         return prev - 1;
@@ -80,6 +87,7 @@ const ChallengeModal = ({
 
   const handleStartChallenge = (challengee) => {
     setSelectedChallengee(challengee);
+    challengeeRef.current = challengee; // Update ref
     startChallengeWaitingTimer();
   };
 
@@ -96,8 +104,8 @@ const ChallengeModal = ({
     }
 
     // Call the parent's finish challenge handler with skipSpeakingModal flag
+    // Parent will handle closing the modal
     onFinishChallenge(challenger, selectedChallengee, skipSpeakingModal);
-    onClose();
   };
 
   const pauseTimer = () => {
@@ -116,17 +124,21 @@ const ChallengeModal = ({
         const newTimer = setInterval(() => {
           setTimeRemaining(prev => {
             if (prev <= 1) {
-              // Timer finished - close the popup
+              // Timer finished - use the same logic as manual finish
               playAlarmSound();
               clearInterval(newTimer);
               setTimer(null);
               
               // Only proceed if challengee is selected
-              if (selectedChallengee) {
-                // Call the parent's finish challenge handler without opening speaking modal
-                onFinishChallenge(challenger, selectedChallengee, true);
+              if (challengeeRef.current) {
+                // Call the parent directly with the current challengee
+                // Use setTimeout to move out of React's render cycle
+                setTimeout(() => {
+                  onFinishChallenge(challenger, challengeeRef.current, true);
+                }, 0);
+              } else {
+                onClose(); // Close immediately if no challengee
               }
-              onClose(); // Close the popup
               return 0;
             }
             return prev - 1;
