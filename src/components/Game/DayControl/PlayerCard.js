@@ -88,8 +88,13 @@ const PlayerCard = ({
                 چالش: {challengesReceived}/{maxChallenges}
               </span>
             )}
-            {isTrialCandidate && (
+            {/* Show trial candidate badge only for alive players */}
+            {player.isAlive && isTrialCandidate && (
               <span className="badge bg-danger">کاندیدای محاکمه</span>
+            )}
+            {/* Show elimination method for dead players */}
+            {!player.isAlive && player.eliminationReason === 'trial' && (
+              <span className="badge bg-danger">اخراج شده توسط شهر</span>
             )}
           </div>
 
@@ -132,7 +137,7 @@ const PlayerCard = ({
           
           <button 
             className={`btn btn-sm ${player.isAlive ? 'btn-danger' : 'btn-success'}`}
-            onClick={() => player.isAlive ? eliminatePlayer(player.id) : revivePlayer(player.id)}
+            onClick={() => player.isAlive ? eliminatePlayer(player.id, currentPhase === 'trial' ? 'trial' : 'manual') : revivePlayer(player.id)}
           >
             {player.isAlive ? 'حذف' : 'احیا'}
           </button>

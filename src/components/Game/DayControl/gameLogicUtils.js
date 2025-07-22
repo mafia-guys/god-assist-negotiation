@@ -62,11 +62,13 @@ export const processPlayerData = (currentRoles, assignments, eliminatedPlayers) 
   // Get all players with their roles and names, ordered by selection sequence
   const allPlayers = currentRoles.map((role, index) => {
     const assignment = assignments[index];
+    const eliminationReason = eliminatedPlayers[index]; // Get elimination reason if exists
     return {
       id: index,
       name: assignment?.name || `بازیکن ${index + 1}`,
       role: role,
-      isAlive: !eliminatedPlayers.has(index),
+      isAlive: !eliminationReason, // Player is alive if not in eliminatedPlayers object
+      eliminationReason: eliminationReason, // Store elimination reason
       originalIndex: index + 1 // Store the original button number (1-based)
     };
   })

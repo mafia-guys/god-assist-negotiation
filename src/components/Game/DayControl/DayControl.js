@@ -59,15 +59,15 @@ const DayControl = ({ currentRoles, assignments }) => {
 
   const { alivePlayers, deadPlayers } = processPlayerData(currentRoles, assignments, eliminatedPlayers);
 
-  const eliminatePlayer = (playerId) => {
-    setEliminatedPlayers(prev => new Set([...prev, playerId]));
+  const eliminatePlayer = (playerId, reason = 'manual') => {
+    setEliminatedPlayers(prev => ({ ...prev, [playerId]: reason }));
   };
 
   const revivePlayer = (playerId) => {
     setEliminatedPlayers(prev => {
-      const newSet = new Set(prev);
-      newSet.delete(playerId);
-      return newSet;
+      const newEliminatedPlayers = { ...prev };
+      delete newEliminatedPlayers[playerId];
+      return newEliminatedPlayers;
     });
   };
 

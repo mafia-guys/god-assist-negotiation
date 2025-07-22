@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const useDayControlState = () => {
-  const [eliminatedPlayers, setEliminatedPlayers] = useState(new Set());
+  const [eliminatedPlayers, setEliminatedPlayers] = useState({}); // Changed to object: { playerId: reason }
   const [currentPhase, setCurrentPhase] = useState('discussion'); // 'discussion', 'voting', 'trial'
   const [playerVotes, setPlayerVotes] = useState({}); // Track votes for each player
   const [showVoteModal, setShowVoteModal] = useState(false);
