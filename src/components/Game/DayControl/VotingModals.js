@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 const VotingModals = ({
   showVoteModal,
@@ -12,31 +12,19 @@ const VotingModals = ({
   setShowTrialVoteModal,
   trialVotingPlayer,
   trialVotes,
-  saveTrialVotes
+  saveTrialVotes,
+  trialCandidates = []
 }) => {
-  const [selectedVotes, setSelectedVotes] = useState(null);
-  const [selectedTrialVotes, setSelectedTrialVotes] = useState(null);
 
   const handleVoteSelect = (voteCount) => {
-    setSelectedVotes(voteCount);
+    // Immediately save and close the modal
+    saveVotes(votingPlayer.id, voteCount);
   };
 
   const handleTrialVoteSelect = (voteCount) => {
-    setSelectedTrialVotes(voteCount);
+    // Immediately save and close the modal
+    saveTrialVotes(trialVotingPlayer.id, voteCount);
   };
-
-  // Reset selections when modals open
-  useEffect(() => {
-    if (showVoteModal) {
-      setSelectedVotes(null);
-    }
-  }, [showVoteModal]);
-
-  useEffect(() => {
-    if (showTrialVoteModal) {
-      setSelectedTrialVotes(null);
-    }
-  }, [showTrialVoteModal]);
 
   return (
     <>
@@ -56,7 +44,7 @@ const VotingModals = ({
                       <div key={i} className="col-3 col-md-2">
                         <button
                           className={`btn w-100 ${
-                            (selectedVotes !== null ? selectedVotes : (playerVotes[votingPlayer.id] || 0)) === i
+                            (playerVotes[votingPlayer.id] || 0) === i
                               ? 'btn-primary' 
                               : 'btn-outline-primary'
                           }`}
@@ -78,16 +66,6 @@ const VotingModals = ({
                   onClick={() => setShowVoteModal(false)}
                 >
                   بستن
-                </button>
-                <button 
-                  className="btn btn-primary"
-                  onClick={() => {
-                    const votes = selectedVotes !== null ? selectedVotes : (playerVotes[votingPlayer.id] || 0);
-                    saveVotes(votingPlayer.id, votes);
-                    setSelectedVotes(null); // Reset selection
-                  }}
-                >
-                  ذخیره
                 </button>
               </div>
             </div>
@@ -111,7 +89,7 @@ const VotingModals = ({
                       <div key={i} className="col-3 col-md-2">
                         <button
                           className={`btn w-100 ${
-                            (selectedTrialVotes !== null ? selectedTrialVotes : (trialVotes[trialVotingPlayer.id] || 0)) === i
+                            (trialVotes[trialVotingPlayer.id] || 0) === i
                               ? 'btn-danger' 
                               : 'btn-outline-danger'
                           }`}
@@ -124,7 +102,8 @@ const VotingModals = ({
                   </div>
                 </div>
                 <small className="text-muted">
-                  رای‌های لازم برای محکومیت: {getRequiredVotes(alivePlayers.length)}
+                  رای‌های لازم برای محکومیت: {getRequiredVotes(alivePlayers.length)} | 
+                  کاندیداهای محاکمه: {trialCandidates.length}
                 </small>
               </div>
               <div className="modal-footer">
@@ -133,16 +112,6 @@ const VotingModals = ({
                   onClick={() => setShowTrialVoteModal(false)}
                 >
                   بستن
-                </button>
-                <button 
-                  className="btn btn-danger"
-                  onClick={() => {
-                    const votes = selectedTrialVotes !== null ? selectedTrialVotes : (trialVotes[trialVotingPlayer.id] || 0);
-                    saveTrialVotes(trialVotingPlayer.id, votes);
-                    setSelectedTrialVotes(null); // Reset selection
-                  }}
-                >
-                  ذخیره
                 </button>
               </div>
             </div>

@@ -239,10 +239,18 @@ const DayControl = ({ currentRoles, assignments }) => {
         <div className="col-md-8">
           <div className="card">
             <div className="card-header">
-              <h5 className="mb-0">بازیکنان زنده ({alivePlayers.length})</h5>
+              <h5 className="mb-0">
+                {currentPhase === 'trial' 
+                  ? `بازیکنان محاکمه (${getTrialCandidates(alivePlayers, playerVotes).length})`
+                  : `بازیکنان زنده (${alivePlayers.length})`
+                }
+              </h5>
             </div>
             <div className="card-body">
-              {alivePlayers.map(player => (
+              {(currentPhase === 'trial' 
+                ? getTrialCandidates(alivePlayers, playerVotes)
+                : alivePlayers
+              ).map(player => (
                 <PlayerCard 
                   key={player.id} 
                   player={player}
@@ -309,6 +317,7 @@ const DayControl = ({ currentRoles, assignments }) => {
         trialVotingPlayer={trialVotingPlayer}
         trialVotes={trialVotes}
         saveTrialVotes={saveTrialVotes}
+        trialCandidates={getTrialCandidates(alivePlayers, playerVotes)}
       />
 
       {/* Speaking Modal */}
