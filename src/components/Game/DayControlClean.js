@@ -19,7 +19,6 @@ const DayControl = ({ currentRoles, assignments }) => {
   const [playerChallenges, setPlayerChallenges] = useState({}); // Track how many challenges each player has received
   const [challengeGivers, setChallengeGivers] = useState({}); // Track who gave challenges to each player
   const [playersWhoSpoke, setPlayersWhoSpoke] = useState(new Set()); // Track players who have already spoken
-  const [playersWhoGaveChallenges, setPlayersWhoGaveChallenges] = useState(new Set()); // Track players who have already given challenges
   
   // Speaking modal states
   const [showSpeakingModal, setShowSpeakingModal] = useState(false);
@@ -186,7 +185,7 @@ const DayControl = ({ currentRoles, assignments }) => {
     setShowChallengeModal(true);
   };
 
-  const handleFinishChallenge = (challenger, challengee, skipSpeakingModal = false) => {
+  const handleFinishChallenge = (challenger, challengee) => {
     // Update challenge data - challengee receives the challenge
     const updatedPlayerChallenges = {
       ...playerChallenges,
@@ -201,29 +200,22 @@ const DayControl = ({ currentRoles, assignments }) => {
 
     // Mark the challenger (who gave the challenge) as having spoken
     const updatedPlayersWhoSpoke = new Set([...playersWhoSpoke, challenger.id]);
-    
-    // Mark the challenger as having given a challenge
-    const updatedPlayersWhoGaveChallenges = new Set([...playersWhoGaveChallenges, challenger.id]);
 
     setPlayerChallenges(updatedPlayerChallenges);
     setChallengeGivers(updatedChallengeGivers);
     setPlayersWhoSpoke(updatedPlayersWhoSpoke);
-    setPlayersWhoGaveChallenges(updatedPlayersWhoGaveChallenges);
 
-    // Only automatically open speaking modal if not manually terminated
-    if (!skipSpeakingModal) {
-      setTimeout(() => {
-        setSpeakingPlayer(challengee);
-        setShowSpeakingModal(true);
-      }, 100);
-    }
+    // Automatically open speaking modal for the challenged player
+    setTimeout(() => {
+      setSpeakingPlayer(challengee);
+      setShowSpeakingModal(true);
+    }, 100);
   };
 
   const resetChallenges = () => {
     setPlayerChallenges({});
     setChallengeGivers({});
     setPlayersWhoSpoke(new Set()); // Reset players who have spoken
-    setPlayersWhoGaveChallenges(new Set()); // Reset players who have given challenges
   };
 
   // Handle trial result processing
@@ -286,7 +278,6 @@ const DayControl = ({ currentRoles, assignments }) => {
     const challengesReceived = playerChallenges[player.id] || 0;
     const challengesByWho = challengeGivers[player.id] || [];
     const hasSpoken = playersWhoSpoke.has(player.id);
-    const hasGivenChallenge = playersWhoGaveChallenges.has(player.id);
 
     return (
       <div 
@@ -316,18 +307,18 @@ const DayControl = ({ currentRoles, assignments }) => {
                 <button
                   className={`btn btn-sm ${hasSpoken ? 'btn-success' : 'btn-outline-primary'}`}
                   onClick={() => openSpeakingModal(player)}
-                  disabled={!player.isAlive || hasSpoken}
-                  title={hasSpoken ? "Already spoke" : "Turn to speak"}
+                  disabled={!player.isAlive}
+                  title="Turn to speak"
                 >
                   صحبت {hasSpoken && '✓'}
                 </button>
                 <button
-                  className={`btn btn-sm ${hasGivenChallenge ? 'btn-success' : 'btn-outline-warning'}`}
+                  className="btn btn-sm btn-outline-warning"
                   onClick={() => openChallengeModal(player)}
-                  disabled={!player.isAlive || hasGivenChallenge}
-                  title={hasGivenChallenge ? "Already gave challenge" : "Give challenge"}
+                  disabled={!player.isAlive}
+                  title="Give challenge"
                 >
-                  چالش {hasGivenChallenge && '✓'}
+                  چالش
                 </button>
               </div>
             </div>
