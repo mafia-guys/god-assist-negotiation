@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { GAME_PHASES } from '../constants/gameConstants';
 
-const useGameState = () => {
+// Create Context
+const GameStateContext = createContext();
+
+// Context Provider Component
+export const GameStateProvider = ({ children }) => {
   const [currentDay, setCurrentDay] = useState(1);
   const [days, setDays] = useState({
     1: {
@@ -167,7 +171,7 @@ const useGameState = () => {
     return Object.keys(days).map(day => parseInt(day)).sort((a, b) => a - b);
   };
 
-  return {
+  const value = {
     currentDay,
     eliminatedPlayers: getEliminatedPlayers(), // Return cumulative eliminations for current day view
     setEliminatedPlayers,
@@ -183,6 +187,21 @@ const useGameState = () => {
     isDayCompleted,
     getAllDays
   };
+
+  return (
+    <GameStateContext.Provider value={value}>
+      {children}
+    </GameStateContext.Provider>
+  );
+};
+
+// Hook to use the GameState context
+const useGameState = () => {
+  const context = useContext(GameStateContext);
+  if (!context) {
+    throw new Error('useGameState must be used within a GameStateProvider');
+  }
+  return context;
 };
 
 export default useGameState;

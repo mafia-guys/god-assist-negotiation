@@ -10,7 +10,7 @@ const NightControlPage = ({ currentRoles, assignments, selectionOrder }) => {
     currentDay, 
     getCurrentDayData, 
     updateCurrentDayData, 
-    finishCurrentDay,
+    startNextDay,
     eliminatedPlayers,
     setEliminatedPlayers
   } = useGameState();
@@ -48,9 +48,9 @@ const NightControlPage = ({ currentRoles, assignments, selectionOrder }) => {
                 <p>لطفاً به صفحه اصلی بازگردید و دوباره تلاش کنید.</p>
                 <button 
                   className="btn btn-primary"
-                  onClick={() => navigate('/game')}
+                  onClick={() => navigate('/')}
                 >
-                  بازگشت به بازی
+                  بازگشت به صفحه اصلی
                 </button>
               </div>
             </div>
@@ -399,8 +399,9 @@ const NightControlPage = ({ currentRoles, assignments, selectionOrder }) => {
     console.log('Night actions completed:', nightActions);
     
     // Start a new day
-    finishCurrentDay();
-    navigate('/game');
+    startNextDay();
+    
+    navigate('/day-control');
   };
 
   // Helper function to get role background color
