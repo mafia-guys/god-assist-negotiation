@@ -60,7 +60,7 @@ const PlayerCard = ({
       return {
         card: 'border-dark bg-light',
         overlay: 'position-relative',
-        deadOverlay: 'position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-25 rounded',
+        deadOverlay: 'position-absolute bottom-0 start-0 w-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-75 rounded-bottom',
         nameColor: 'text-muted'
       };
     }
