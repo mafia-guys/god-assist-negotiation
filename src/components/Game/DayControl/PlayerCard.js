@@ -20,7 +20,10 @@ const PlayerCard = ({
   openTrialVoteModal,
   eliminatePlayer,
   revivePlayer,
-  alivePlayers
+  alivePlayers,
+  isReadOnly = false,
+  getEliminationsUpToDay, // Add this prop to access elimination data
+  currentDay // Add current day prop
 }) => {
   const votes = playerVotes[player.id] || 0;
   const trialVotesReceived = trialVotes[player.id];
@@ -30,6 +33,36 @@ const PlayerCard = ({
   const challengesByWho = challengeGivers[player.id] || [];
   const hasSpoken = playersWhoSpoke.has(player.id);
   const hasGivenChallenge = playersWhoGaveChallenges.has(player.id);
+
+  // Helper function to convert day numbers to Persian
+  const getDayInPersian = (dayNumber) => {
+    const persianNumbers = {
+      1: 'اول', 2: 'دوم', 3: 'سوم', 4: 'چهارم', 
+      5: 'پنجم', 6: 'ششم', 7: 'هفتم', 8: 'هشتم', 
+      9: 'نهم', 10: 'دهم'
+    };
+    return persianNumbers[dayNumber] || `${dayNumber}`;
+  };
+
+  // Find which day this player was eliminated
+  const getEliminationDay = () => {
+    if (player.isAlive || !getEliminationsUpToDay) return null;
+    
+    // Check each day to find when this player was eliminated
+    for (let day = 1; day <= currentDay; day++) {
+      const eliminationsForDay = getEliminationsUpToDay(day);
+      const eliminationsForPreviousDay = getEliminationsUpToDay(day - 1);
+      
+      // If player is eliminated in this day but not previous day, they were eliminated on this day
+      if (eliminationsForDay[player.id] && !eliminationsForPreviousDay[player.id]) {
+        return day;
+      }
+    }
+    return null;
+  };
+
+  const eliminationDay = getEliminationDay();
+  const eliminationDayText = eliminationDay ? getDayInPersian(eliminationDay) : '';
 
   // Get status-based styling
   const getCardStyles = () => {
@@ -85,6 +118,7 @@ const PlayerCard = ({
             }}
           >
             💀 {player.eliminationReason === 'trial' ? 'اخراج شده توسط شهر' : 'حذف شده'}
+            {eliminationDayText && ` در روز ${eliminationDayText}`}
           </span>
         </div>
       )}
@@ -124,6 +158,7 @@ const PlayerCard = ({
             <button 
               className={`btn ${player.isAlive ? 'btn-danger' : 'btn-success'} btn-sm`}
               onClick={() => player.isAlive ? eliminatePlayer(player.id, currentPhase === 'trial' ? 'trial' : 'manual') : revivePlayer(player.id)}
+              disabled={isReadOnly}
               style={{
                 fontSize: '0.75rem',
                 padding: currentPhase === 'discussion' ? '2px 6px' : '4px 8px',
@@ -204,7 +239,7 @@ const PlayerCard = ({
                   <button
                     className={`btn btn-sm ${hasSpoken ? 'btn-success' : 'btn-outline-primary'}`}
                     onClick={() => openSpeakingModal(player)}
-                    disabled={hasSpoken}
+                    disabled={hasSpoken || isReadOnly}
                     title={hasSpoken ? "قبلاً صحبت کرده" : "نوبت صحبت"}
                   >
                     <i className="bi bi-chat-dots me-1"></i>
@@ -217,7 +252,7 @@ const PlayerCard = ({
                   <button
                     className={`btn btn-sm ${hasGivenChallenge ? 'btn-success' : 'btn-outline-warning'}`}
                     onClick={() => openChallengeModal(player)}
-                    disabled={hasGivenChallenge}
+                    disabled={hasGivenChallenge || isReadOnly}
                     title={hasGivenChallenge ? "قبلاً چالش داده" : "دادن چالش"}
                   >
                     <i className="bi bi-lightning me-1"></i>
@@ -230,6 +265,7 @@ const PlayerCard = ({
                   <button 
                     className="btn btn-warning btn-sm"
                     onClick={() => openVoteModal(player)}
+                    disabled={isReadOnly}
                     title="رای‌گیری"
                     style={{ minWidth: '80px' }}
                   >
@@ -243,6 +279,7 @@ const PlayerCard = ({
                   <button 
                     className="btn btn-danger btn-sm flex-fill"
                     onClick={() => openTrialVoteModal(player)}
+                    disabled={isReadOnly}
                     title="رای محاکمه"
                   >
                     <i className="bi bi-scales me-1"></i>

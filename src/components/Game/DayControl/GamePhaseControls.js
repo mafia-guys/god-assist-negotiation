@@ -11,7 +11,8 @@ const GamePhaseControls = ({
   resetTrialVotes,
   resetChallenges,
   handleProcessTrialResults,
-  getTrialCandidates
+  getTrialCandidates,
+  isReadOnly = false
 }) => {
   return (
     <>
@@ -42,18 +43,21 @@ const GamePhaseControls = ({
                 <button 
                   className={`btn btn-${currentPhase === 'discussion' ? getPhaseColor('discussion') : 'outline-' + getPhaseColor('discussion')}`}
                   onClick={() => setCurrentPhase('discussion')}
+                  disabled={isReadOnly}
                 >
                   بحث و گفتگو
                 </button>
                 <button 
                   className={`btn btn-${currentPhase === 'voting' ? getPhaseColor('voting') : 'outline-' + getPhaseColor('voting')}`}
                   onClick={() => setCurrentPhase('voting')}
+                  disabled={isReadOnly}
                 >
                   رای‌گیری ({getRequiredVotes(alivePlayers.length)} رای لازم)
                 </button>
                 <button 
                   className={`btn btn-${currentPhase === 'trial' ? getPhaseColor('trial') : 'outline-' + getPhaseColor('trial')}`}
                   onClick={() => setCurrentPhase('trial')}
+                  disabled={isReadOnly}
                 >
                   محاکمه
                 </button>
@@ -75,6 +79,7 @@ const GamePhaseControls = ({
                     <button 
                       className="btn btn-info w-100"
                       onClick={resetChallenges}
+                      disabled={isReadOnly}
                     >
                       ریست چالش‌ها
                     </button>
@@ -87,6 +92,7 @@ const GamePhaseControls = ({
                     <button 
                       className="btn btn-warning w-100"
                       onClick={resetVotes}
+                      disabled={isReadOnly}
                     >
                       ریست آرا
                     </button>
@@ -100,6 +106,7 @@ const GamePhaseControls = ({
                       <button 
                         className="btn btn-danger w-100"
                         onClick={resetTrialVotes}
+                        disabled={isReadOnly}
                       >
                         ریست محاکمه
                       </button>
@@ -108,7 +115,7 @@ const GamePhaseControls = ({
                       <button 
                         className="btn btn-success w-100"
                         onClick={handleProcessTrialResults}
-                        disabled={getTrialCandidates().length === 0}
+                        disabled={getTrialCandidates().length === 0 || isReadOnly}
                       >
                         نتیجه محاکمه
                       </button>

@@ -23,7 +23,10 @@ const SidebarPanels = ({
   openVoteModal,
   openTrialVoteModal,
   eliminatePlayer,
-  revivePlayer
+  revivePlayer,
+  // New props for day information
+  getEliminationsUpToDay,
+  currentDay
 }) => {
   return (
     <div className="col-md-4">
@@ -56,6 +59,8 @@ const SidebarPanels = ({
                 eliminatePlayer={eliminatePlayer}
                 revivePlayer={revivePlayer}
                 alivePlayers={alivePlayers}
+                getEliminationsUpToDay={getEliminationsUpToDay}
+                currentDay={currentDay}
               />
             ))}
           </div>
