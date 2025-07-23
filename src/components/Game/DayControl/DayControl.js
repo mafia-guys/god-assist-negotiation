@@ -224,6 +224,7 @@ const DayControl = ({ currentRoles, assignments, selectionOrder }) => {
         getPhaseColor={getPhaseColor}
         getRequiredVotes={getRequiredVotes}
         alivePlayers={alivePlayers}
+        deadPlayers={deadPlayers}
         resetVotes={resetVotes}
         resetTrialVotes={resetTrialVotes}
         resetChallenges={resetChallenges}

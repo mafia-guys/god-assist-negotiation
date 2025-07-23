@@ -6,6 +6,7 @@ const GamePhaseControls = ({
   getPhaseColor, 
   getRequiredVotes, 
   alivePlayers,
+  deadPlayers,
   resetVotes,
   resetTrialVotes,
   resetChallenges,
@@ -23,7 +24,7 @@ const GamePhaseControls = ({
                 <h4 className="mb-0">کنترل روز بازی</h4>
                 <div className="d-flex gap-2">
                   <span className="badge bg-info">زنده: {alivePlayers.length}</span>
-                  <span className="badge bg-secondary">حذف شده: {alivePlayers.filter(p => !p.isAlive).length}</span>
+                  <span className="badge bg-secondary">حذف شده: {deadPlayers.length}</span>
                 </div>
               </div>
             </div>
