@@ -2,7 +2,7 @@
 
 // Game configuration constants
 export const GAME_CONFIG = {
-  DEFAULT_PLAYER_COUNT: 13,
+  DEFAULT_PLAYER_COUNT: 7,
   MIN_PLAYER_COUNT: 7,
   MAX_PLAYER_COUNT: 14
 };

@@ -6,7 +6,8 @@ import { GamePage, RolesPage, TimersPage, GodViewPage, DayControlPage, NightCont
 import { useGameLogic, useTimers } from './hooks';
 import { GameStateProvider } from './hooks/useGameState';
 
-const App = () => {
+// Main App Content Component (inside the provider)
+const AppContent = () => {
   const {
     playerCount,
     setPlayerCount,
@@ -35,9 +36,8 @@ const App = () => {
   } = useTimers();
 
   return (
-    <GameStateProvider>
-      <Router>
-        <div className="min-vh-100 bg-light">
+    <Router>
+      <div className="min-vh-100 bg-light">
           <audio ref={alarmRef} src="alarm.mp3" preload="auto" />
           
           <Navigation gameStarted={currentRoles && currentRoles.length > 0} />
@@ -117,6 +117,14 @@ const App = () => {
         </Routes>
       </div>
     </Router>
+  );
+};
+
+// Main App Component (wrapper with provider)
+const App = () => {
+  return (
+    <GameStateProvider>
+      <AppContent />
     </GameStateProvider>
   );
 };

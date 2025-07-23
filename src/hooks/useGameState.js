@@ -171,6 +171,27 @@ export const GameStateProvider = ({ children }) => {
     return Object.keys(days).map(day => parseInt(day)).sort((a, b) => a - b);
   };
 
+  // Reset game state to initial values
+  const resetGameState = () => {
+    setCurrentDay(1);
+    setDays({
+      1: {
+        phase: GAME_PHASES.DISCUSSION,
+        votes: {},
+        trialVotes: {},
+        challenges: {},
+        challengeGivers: {},
+        playersWhoSpoke: new Set(),
+        playersWhoGaveChallenges: new Set(),
+        trialResult: null,
+        maxChallenges: 2,
+        isReadOnly: false,
+        eliminatedPlayers: {}, // Day-specific eliminations
+        dayEvents: [] // Track events that happened on this day
+      }
+    });
+  };
+
   const value = {
     currentDay,
     eliminatedPlayers: getEliminatedPlayers(), // Return cumulative eliminations for current day view
@@ -185,7 +206,8 @@ export const GameStateProvider = ({ children }) => {
     finishCurrentDay,
     switchToDay,
     isDayCompleted,
-    getAllDays
+    getAllDays,
+    resetGameState
   };
 
   return (

@@ -1,8 +1,10 @@
 import { useState, useCallback } from 'react';
-import { roleIcons, rolesByCount, GAME_CONFIG } from '../constants/gameConstants';
+import { roleIcons, rolesByCount } from '../constants/gameConstants';
+import useGameState from './useGameState';
 
 const useGameLogic = () => {
-  const [playerCount, setPlayerCount] = useState(GAME_CONFIG.DEFAULT_PLAYER_COUNT);
+  const { resetGameState } = useGameState();
+  const [playerCount, setPlayerCount] = useState(10);
   const [currentRoles, setCurrentRoles] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [assignments, setAssignments] = useState([]);
@@ -21,8 +23,8 @@ const useGameLogic = () => {
   };
 
   const startGame = useCallback(() => {
-    if (playerCount < GAME_CONFIG.MIN_PLAYER_COUNT || playerCount > GAME_CONFIG.MAX_PLAYER_COUNT) {
-      alert(`عدد باید بین ${GAME_CONFIG.MIN_PLAYER_COUNT} تا ${GAME_CONFIG.MAX_PLAYER_COUNT} باشد.`);
+    if (playerCount < 7 || playerCount > 14) {
+      alert("عدد باید بین ۷ تا ۱۴ باشد.");
       return;
     }
     const roles = shuffle([...rolesByCount[playerCount]]);
@@ -86,6 +88,7 @@ const useGameLogic = () => {
   }, []);
 
   const resetGame = useCallback(() => {
+    // Reset game logic state
     setCurrentRoles([]);
     setCurrentIndex(-1);
     setAssignments([]);
@@ -93,7 +96,10 @@ const useGameLogic = () => {
     setSelectionOrder([]); // Reset selection order
     setShowRoleDisplay(false);
     setPlayerName('');
-  }, []);
+    
+    // Reset game state (days, eliminations, etc.)
+    resetGameState();
+  }, [resetGameState]);
 
   return {
     playerCount,
