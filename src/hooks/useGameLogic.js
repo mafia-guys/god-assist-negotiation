@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
-import { roleIcons, rolesByCount } from '../constants/gameConstants';
+import { roleIcons, rolesByCount, GAME_CONFIG } from '../constants/gameConstants';
 
 const useGameLogic = () => {
-  const [playerCount, setPlayerCount] = useState(10);
+  const [playerCount, setPlayerCount] = useState(GAME_CONFIG.DEFAULT_PLAYER_COUNT);
   const [currentRoles, setCurrentRoles] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [assignments, setAssignments] = useState([]);
@@ -21,8 +21,8 @@ const useGameLogic = () => {
   };
 
   const startGame = useCallback(() => {
-    if (playerCount < 7 || playerCount > 14) {
-      alert("عدد باید بین ۷ تا ۱۴ باشد.");
+    if (playerCount < GAME_CONFIG.MIN_PLAYER_COUNT || playerCount > GAME_CONFIG.MAX_PLAYER_COUNT) {
+      alert(`عدد باید بین ${GAME_CONFIG.MIN_PLAYER_COUNT} تا ${GAME_CONFIG.MAX_PLAYER_COUNT} باشد.`);
       return;
     }
     const roles = shuffle([...rolesByCount[playerCount]]);

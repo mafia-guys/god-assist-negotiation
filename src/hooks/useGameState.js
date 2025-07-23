@@ -1,10 +1,11 @@
 import { useState } from 'react';
+import { GAME_PHASES } from '../constants/gameConstants';
 
 const useGameState = () => {
   const [currentDay, setCurrentDay] = useState(1);
   const [days, setDays] = useState({
     1: {
-      phase: 'discussion',
+      phase: GAME_PHASES.DISCUSSION,
       votes: {},
       trialVotes: {},
       challenges: {},
@@ -104,11 +105,11 @@ const useGameState = () => {
       ...prev,
       [currentDay]: {
         ...prev[currentDay],
-        phase: 'completed',
+        phase: GAME_PHASES.COMPLETED,
         isReadOnly: true
       },
       [nextDay]: {
-        phase: 'discussion',
+        phase: GAME_PHASES.DISCUSSION,
         votes: {},
         trialVotes: {},
         challenges: {},

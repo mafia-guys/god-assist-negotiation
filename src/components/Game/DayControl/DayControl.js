@@ -8,6 +8,7 @@ import VotingModals from './VotingModals';
 import SidebarPanels from './SidebarPanels';
 import TrialResultsDisplay from './TrialResultsDisplay';
 import DayNavigation from './DayNavigation';
+import { getDayInPersian, GAME_PHASES } from '../../../constants/gameConstants';
 import useGameState from '../../../hooks/useGameState';
 import { 
   getPhaseColor, 
@@ -35,7 +36,7 @@ const DayControl = ({ currentRoles, assignments, selectionOrder }) => {
   // Get current day data
   const dayData = getCurrentDayData();
   const {
-    phase: currentPhase = 'discussion',
+    phase: currentPhase = GAME_PHASES.DISCUSSION,
     votes: playerVotes = {},
     trialVotes = {},
     challenges: playerChallenges = {},
@@ -114,23 +115,6 @@ const DayControl = ({ currentRoles, assignments, selectionOrder }) => {
     updateCurrentDayData({ playersWhoGaveChallenges });
   };
 
-  // Helper function to convert day numbers to Persian words
-  const getDayInPersian = (dayNumber) => {
-    const persianNumbers = {
-      1: 'اول',
-      2: 'دوم', 
-      3: 'سوم',
-      4: 'چهارم',
-      5: 'پنجم',
-      6: 'ششم',
-      7: 'هفتم',
-      8: 'هشتم',
-      9: 'نهم',
-      10: 'دهم'
-    };
-    return persianNumbers[dayNumber] || `${dayNumber}`;
-  };
-
   const eliminatePlayer = (playerId, reason = 'manual') => {
     setEliminatedPlayers(prev => ({ ...prev, [playerId]: reason }));
     
@@ -143,7 +127,7 @@ const DayControl = ({ currentRoles, assignments, selectionOrder }) => {
         playerName: player.name,
         playerId,
         reason,
-        description: `${player.name} ${reason === 'trial' ? `اخراج شده توسط شهر در روز ${dayInPersian}` : `حذف شد در روز ${dayInPersian}`}`
+        description: `${player.name} ${reason === GAME_PHASES.TRIAL ? `اخراج شده توسط شهر در روز ${dayInPersian}` : `حذف شد در روز ${dayInPersian}`}`
       });
     }
   };
@@ -329,7 +313,7 @@ const DayControl = ({ currentRoles, assignments, selectionOrder }) => {
 
   // Check if day can be completed (trial phase completed with result)
   const canCompleteDay = () => {
-    return currentPhase === 'trial' && trialResult && trialResult.action === 'elimination';
+    return currentPhase === GAME_PHASES.TRIAL && trialResult && trialResult.action === 'elimination';
   };
 
   // Check if next day can be started
@@ -356,7 +340,7 @@ const DayControl = ({ currentRoles, assignments, selectionOrder }) => {
       const votesReceived = trialVotes[player.id] || 0;
       
       if (votesReceived >= requiredVotes) {
-        eliminatePlayer(player.id, 'trial');
+        eliminatePlayer(player.id, GAME_PHASES.TRIAL);
         return { 
           action: 'elimination', 
           message: `${player.name} محکوم و اخراج شده توسط شهر`,
@@ -398,7 +382,7 @@ const DayControl = ({ currentRoles, assignments, selectionOrder }) => {
 
     // Single player with most votes gets eliminated (regardless of vote count)
     const playerToEliminate = playersWithMaxVotes[0].player;
-    eliminatePlayer(playerToEliminate.id, 'trial');
+    eliminatePlayer(playerToEliminate.id, GAME_PHASES.TRIAL);
     
     // Log trial elimination event
     const dayInPersian = getDayInPersian(currentDay);
@@ -460,14 +444,14 @@ const DayControl = ({ currentRoles, assignments, selectionOrder }) => {
           <div className="card">
             <div className="card-header">
               <h5 className="mb-0">
-                {currentPhase === 'trial' 
+                {currentPhase === GAME_PHASES.TRIAL 
                   ? `بازیکنان محاکمه (${getTrialCandidates(alivePlayers, playerVotes).length})`
                   : `بازیکنان زنده (${alivePlayers.length})`
                 }
               </h5>
             </div>
             <div className="card-body">
-              {(currentPhase === 'trial' 
+              {(currentPhase === GAME_PHASES.TRIAL 
                 ? getTrialCandidates(alivePlayers, playerVotes)
                 : alivePlayers
               ).map(player => (

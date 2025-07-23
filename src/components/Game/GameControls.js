@@ -1,7 +1,12 @@
 import React from 'react';
+import { GAME_CONFIG } from '../../constants/gameConstants';
 
 const GameControls = ({ playerCount, setPlayerCount, startGame }) => {
-  const playerOptions = [7, 8, 9, 10, 11, 12, 13, 14];
+  // Generate player options dynamically from min to max
+  const playerOptions = Array.from(
+    { length: GAME_CONFIG.MAX_PLAYER_COUNT - GAME_CONFIG.MIN_PLAYER_COUNT + 1 }, 
+    (_, i) => GAME_CONFIG.MIN_PLAYER_COUNT + i
+  );
 
   return (
     <div className="container">
@@ -33,7 +38,7 @@ const GameControls = ({ playerCount, setPlayerCount, startGame }) => {
                   تعداد بازیکنان را انتخاب کنید:
                 </label>
                 <p className="text-muted small mb-0">
-                  حداقل ۷ و حداکثر ۱۴ بازیکن
+                  حداقل {GAME_CONFIG.MIN_PLAYER_COUNT} و حداکثر {GAME_CONFIG.MAX_PLAYER_COUNT} بازیکن
                 </p>
               </div>
               

@@ -1,9 +1,11 @@
 // Helper functions for game logic
+import { GAME_PHASES } from '../../../constants/gameConstants';
+
 export const getPhaseColor = (phase) => {
   switch (phase) {
-    case 'discussion': return 'primary';
-    case 'voting': return 'warning';
-    case 'trial': return 'danger';
+    case GAME_PHASES.DISCUSSION: return 'primary';
+    case GAME_PHASES.VOTING: return 'warning';
+    case GAME_PHASES.TRIAL: return 'danger';
     default: return 'secondary';
   }
 };

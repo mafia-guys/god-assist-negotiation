@@ -1,5 +1,5 @@
 import React from 'react';
-import { roleIcons } from '../../../constants/gameConstants';
+import { roleIcons, getDayInPersian, GAME_PHASES } from '../../../constants/gameConstants';
 
 const PlayerCard = ({ 
   player, 
@@ -33,16 +33,6 @@ const PlayerCard = ({
   const challengesByWho = challengeGivers[player.id] || [];
   const hasSpoken = playersWhoSpoke.has(player.id);
   const hasGivenChallenge = playersWhoGaveChallenges.has(player.id);
-
-  // Helper function to convert day numbers to Persian
-  const getDayInPersian = (dayNumber) => {
-    const persianNumbers = {
-      1: 'اول', 2: 'دوم', 3: 'سوم', 4: 'چهارم', 
-      5: 'پنجم', 6: 'ششم', 7: 'هفتم', 8: 'هشتم', 
-      9: 'نهم', 10: 'دهم'
-    };
-    return persianNumbers[dayNumber] || `${dayNumber}`;
-  };
 
   // Find which day this player was eliminated
   const getEliminationDay = () => {
@@ -117,7 +107,7 @@ const PlayerCard = ({
               pointerEvents: 'auto' // Re-enable pointer events for the badge itself
             }}
           >
-            💀 {player.eliminationReason === 'trial' ? 'اخراج شده توسط شهر' : 'حذف شده'}
+            💀 {player.eliminationReason === GAME_PHASES.TRIAL ? 'اخراج شده توسط شهر' : 'حذف شده'}
             {eliminationDayText && ` در روز ${eliminationDayText}`}
           </span>
         </div>
@@ -157,16 +147,16 @@ const PlayerCard = ({
             {/* Eliminate/Revive Button - Available in all phases */}
             <button 
               className={`btn ${player.isAlive ? 'btn-danger' : 'btn-success'} btn-sm`}
-              onClick={() => player.isAlive ? eliminatePlayer(player.id, currentPhase === 'trial' ? 'trial' : 'manual') : revivePlayer(player.id)}
+              onClick={() => player.isAlive ? eliminatePlayer(player.id, currentPhase === GAME_PHASES.TRIAL ? GAME_PHASES.TRIAL : 'manual') : revivePlayer(player.id)}
               disabled={isReadOnly}
               style={{
                 fontSize: '0.75rem',
-                padding: currentPhase === 'discussion' ? '2px 6px' : '4px 8px',
-                minWidth: currentPhase === 'discussion' ? '24px' : 'auto'
+                padding: currentPhase === GAME_PHASES.DISCUSSION ? '2px 6px' : '4px 8px',
+                minWidth: currentPhase === GAME_PHASES.DISCUSSION ? '24px' : 'auto'
               }}
               title={player.isAlive ? 'حذف از بازی' : 'احیای بازیکن'}
             >
-              {currentPhase === 'discussion' && player.isAlive ? (
+              {currentPhase === GAME_PHASES.DISCUSSION && player.isAlive ? (
                 <i className="bi bi-x-lg"></i>  // Simple X icon for discussion phase
               ) : (
                 <i className={`bi ${player.isAlive ? 'bi-person-x' : 'bi-person-plus'}`}></i>
@@ -180,21 +170,21 @@ const PlayerCard = ({
           <div className="col-12">
             <div className="d-flex flex-wrap gap-1">
               {/* Challenges Badge - Only show in discussion phase */}
-              {currentPhase === 'discussion' && challengesReceived > 0 && (
+              {currentPhase === GAME_PHASES.DISCUSSION && challengesReceived > 0 && (
                 <span className="badge bg-warning rounded-pill">
                   ⚔️ چالش: {challengesReceived}/{maxChallenges}
                 </span>
               )}
               
               {/* Votes Badge - Only in voting and trial phases */}
-              {(currentPhase === 'voting' || currentPhase === 'trial') && (
+              {(currentPhase === GAME_PHASES.VOTING || currentPhase === GAME_PHASES.TRIAL) && (
                 <span className="badge bg-primary rounded-pill">
                   📊 آرا: {votes}
                 </span>
               )}
               
               {/* Trial Candidate Badge - Only in voting and trial phases for alive players */}
-              {player.isAlive && isTrialCandidate && (currentPhase === 'voting' || currentPhase === 'trial') && (
+              {player.isAlive && isTrialCandidate && (currentPhase === GAME_PHASES.VOTING || currentPhase === GAME_PHASES.TRIAL) && (
                 <span className="badge bg-danger rounded-pill">
                   ⚖️ کاندیدای محاکمه
                 </span>
@@ -204,7 +194,7 @@ const PlayerCard = ({
         </div>
 
         {/* Challenge Details - Only show during discussion phase */}
-        {currentPhase === 'discussion' && challengesByWho.length > 0 && (
+        {currentPhase === GAME_PHASES.DISCUSSION && challengesByWho.length > 0 && (
           <div className="row mb-2">
             <div className="col-12">
               <div className="alert alert-warning alert-sm py-1 px-2 mb-0">
@@ -235,7 +225,7 @@ const PlayerCard = ({
             <div className="col-12">
               <div className="btn-group w-100" role="group">
                 {/* Speaking Button - Only show during discussion phase */}
-                {currentPhase === 'discussion' && (
+                {currentPhase === GAME_PHASES.DISCUSSION && (
                   <button
                     className={`btn btn-sm ${hasSpoken ? 'btn-success' : 'btn-outline-primary'}`}
                     onClick={() => openSpeakingModal(player)}
@@ -248,7 +238,7 @@ const PlayerCard = ({
                 )}
 
                 {/* Challenge Button - Only show during discussion phase */}
-                {currentPhase === 'discussion' && (
+                {currentPhase === GAME_PHASES.DISCUSSION && (
                   <button
                     className={`btn btn-sm ${hasGivenChallenge ? 'btn-success' : 'btn-outline-warning'}`}
                     onClick={() => openChallengeModal(player)}
@@ -261,7 +251,7 @@ const PlayerCard = ({
                 )}
 
                 {/* Voting Button */}
-                {currentPhase === 'voting' && (
+                {currentPhase === GAME_PHASES.VOTING && (
                   <button 
                     className="btn btn-warning btn-sm"
                     onClick={() => openVoteModal(player)}
@@ -275,7 +265,7 @@ const PlayerCard = ({
                 )}
 
                 {/* Trial Vote Button */}
-                {currentPhase === 'trial' && isTrialCandidate && (
+                {currentPhase === GAME_PHASES.TRIAL && isTrialCandidate && (
                   <button 
                     className="btn btn-danger btn-sm flex-fill"
                     onClick={() => openTrialVoteModal(player)}
