@@ -132,6 +132,25 @@ const useGameState = () => {
     setCurrentDay(nextDay);
   };
 
+  // Finish current day without starting next day (for game end)
+  const finishCurrentDay = () => {
+    // Add day completion event to current day
+    addDayEvent({
+      type: 'day_complete',
+      description: `روز ${currentDay} به پایان رسید - بازی تمام شد`
+    });
+    
+    // Mark current day as completed and read-only
+    setDays(prev => ({
+      ...prev,
+      [currentDay]: {
+        ...prev[currentDay],
+        phase: GAME_PHASES.COMPLETED,
+        isReadOnly: true
+      }
+    }));
+  };
+
   // Switch to a specific day (for viewing)
   const switchToDay = (dayNumber) => {
     setCurrentDay(dayNumber);
@@ -159,6 +178,7 @@ const useGameState = () => {
     addDayEvent,
     getDayEvents,
     startNextDay,
+    finishCurrentDay,
     switchToDay,
     isDayCompleted,
     getAllDays

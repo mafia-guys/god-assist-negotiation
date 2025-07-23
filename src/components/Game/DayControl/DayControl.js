@@ -28,6 +28,7 @@ const DayControl = ({ currentRoles, assignments, selectionOrder }) => {
     updateCurrentDayData,
     addDayEvent,
     startNextDay,
+    finishCurrentDay,
     switchToDay,
     isDayCompleted,
     getAllDays
@@ -432,6 +433,7 @@ const DayControl = ({ currentRoles, assignments, selectionOrder }) => {
         resetChallenges={resetChallenges}
         handleProcessTrialResults={handleProcessTrialResults}
         getTrialCandidates={() => getTrialCandidates(alivePlayers, playerVotes)}
+        finishCurrentDay={finishCurrentDay}
         isReadOnly={isReadOnly}
       />
 

@@ -1,5 +1,5 @@
-import React from 'react';
-import { isMafiaRole, GAME_PHASES, PHASE_LABELS } from '../../../constants/gameConstants';
+import React, { useState, useEffect } from 'react';
+import { isMafiaRole, GAME_PHASES, PHASE_LABELS, VICTORY_CONDITIONS, VICTORY_MESSAGES, checkVictoryCondition } from '../../../constants/gameConstants';
 
 const GamePhaseControls = ({ 
   currentPhase, 
@@ -13,8 +13,12 @@ const GamePhaseControls = ({
   resetChallenges,
   handleProcessTrialResults,
   getTrialCandidates,
+  finishCurrentDay, // Add this prop to finish the current day
   isReadOnly = false
 }) => {
+  const [showVictoryModal, setShowVictoryModal] = useState(false);
+  const [victoryData, setVictoryData] = useState(null);
+
   // Calculate game statistics
   const getGameStats = () => {
     const aliveMafia = alivePlayers.filter(p => isMafiaRole(p.role)).length;
@@ -33,6 +37,30 @@ const GamePhaseControls = ({
   };
 
   const stats = getGameStats();
+  const victoryCondition = checkVictoryCondition(stats.aliveMafia, stats.aliveCitizens, stats.totalMafia);
+
+  // Handle victory detection
+  useEffect(() => {
+    if (victoryCondition !== VICTORY_CONDITIONS.ONGOING && !showVictoryModal && !isReadOnly) {
+      const winnerData = {
+        condition: victoryCondition,
+        message: VICTORY_MESSAGES[victoryCondition],
+        stats: stats
+      };
+      setVictoryData(winnerData);
+      setShowVictoryModal(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [victoryCondition, showVictoryModal, isReadOnly, stats.aliveMafia, stats.aliveCitizens, stats.totalMafia]);
+
+  // Handle victory modal close and finish day
+  const handleVictoryModalClose = () => {
+    setShowVictoryModal(false);
+    if (finishCurrentDay && !isReadOnly) {
+      // Finish the current day when game ends
+      finishCurrentDay();
+    }
+  };
 
   return (
     <>
@@ -96,17 +124,30 @@ const GamePhaseControls = ({
               </div>
               
               {/* Game Status Alert */}
-              {stats.aliveMafia >= stats.aliveCitizens && stats.aliveMafia > 0 && (
+              {victoryCondition === VICTORY_CONDITIONS.MAFIA_WIN && (
                 <div className="alert alert-danger mt-2 mb-0">
-                  <i className="bi bi-exclamation-triangle-fill me-2"></i>
-                  <strong>خطر!</strong> مافیا در حال برتری است ({stats.aliveMafia} مافیا vs {stats.aliveCitizens} شهروند)
+                  <i className="bi bi-trophy-fill me-2"></i>
+                  <strong>🏆 {VICTORY_MESSAGES[VICTORY_CONDITIONS.MAFIA_WIN]}</strong>
+                  <div className="mt-1 small">
+                    ({stats.aliveMafia} مافیا vs {stats.aliveCitizens} شهروند)
+                  </div>
                 </div>
               )}
               
-              {stats.aliveMafia === 0 && stats.totalMafia > 0 && (
+              {victoryCondition === VICTORY_CONDITIONS.CITIZENS_WIN && (
                 <div className="alert alert-success mt-2 mb-0">
-                  <i className="bi bi-check-circle-fill me-2"></i>
-                  <strong>پیروزی شهروندان!</strong> تمام مافیاها حذف شدند
+                  <i className="bi bi-trophy-fill me-2"></i>
+                  <strong>🏆 {VICTORY_MESSAGES[VICTORY_CONDITIONS.CITIZENS_WIN]}</strong>
+                </div>
+              )}
+              
+              {victoryCondition === VICTORY_CONDITIONS.ONGOING && stats.aliveMafia >= stats.aliveCitizens && stats.aliveMafia > 0 && (
+                <div className="alert alert-warning mt-2 mb-0">
+                  <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                  <strong>{VICTORY_MESSAGES.MAFIA_DANGER}</strong>
+                  <div className="mt-1 small">
+                    ({stats.aliveMafia} مافیا vs {stats.aliveCitizens} شهروند)
+                  </div>
                 </div>
               )}
             </div>
@@ -208,6 +249,78 @@ const GamePhaseControls = ({
           </div>
         </div>
       </div>
+
+      {/* Victory Modal */}
+      {showVictoryModal && (
+        <div 
+          className="modal show d-block" 
+          style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+          onClick={handleVictoryModalClose}
+        >
+          <div 
+            className="modal-dialog modal-lg modal-dialog-centered"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-content">
+              <div className={`modal-header text-white ${victoryData?.condition === VICTORY_CONDITIONS.MAFIA_WIN ? 'bg-danger' : 'bg-success'}`}>
+                <h4 className="modal-title w-100 text-center">
+                  <i className="bi bi-trophy-fill me-2"></i>
+                  🏆 پایان بازی! 🏆
+                </h4>
+              </div>
+              <div className="modal-body text-center py-4">
+                <div className="mb-4">
+                  <h3 className={`fw-bold ${victoryData?.condition === VICTORY_CONDITIONS.MAFIA_WIN ? 'text-danger' : 'text-success'}`}>
+                    {victoryData?.message}
+                  </h3>
+                </div>
+                
+                {victoryData && (
+                  <div className="row justify-content-center mb-4">
+                    <div className="col-md-8">
+                      <div className="card">
+                        <div className="card-body">
+                          <h5 className="card-title mb-3">📊 آمار نهایی بازی</h5>
+                          <div className="row">
+                            <div className="col-6">
+                              <div className="text-center p-3 bg-danger text-white rounded">
+                                <h6>🔴 مافیا</h6>
+                                <div className="fs-4 fw-bold">{victoryData.stats.aliveMafia}</div>
+                                <small>باقی‌مانده</small>
+                              </div>
+                            </div>
+                            <div className="col-6">
+                              <div className="text-center p-3 bg-primary text-white rounded">
+                                <h6>🔵 شهروندان</h6>
+                                <div className="fs-4 fw-bold">{victoryData.stats.aliveCitizens}</div>
+                                <small>باقی‌مانده</small>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="alert alert-info">
+                  <i className="bi bi-info-circle me-2"></i>
+                  <strong>روز فعلی به پایان رسید و بازی تمام شد!</strong>
+                </div>
+              </div>
+              <div className="modal-footer justify-content-center">
+                <button 
+                  className={`btn ${victoryData?.condition === VICTORY_CONDITIONS.MAFIA_WIN ? 'btn-danger' : 'btn-success'} btn-lg px-4`}
+                  onClick={handleVictoryModalClose}
+                >
+                  <i className="bi bi-check-circle me-2"></i>
+                  متوجه شدم
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

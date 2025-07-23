@@ -99,6 +99,36 @@ export const UI_TEXT = {
   IN_DAY: 'در روز'
 };
 
+// Victory condition constants
+export const VICTORY_CONDITIONS = {
+  MAFIA_WIN: 'mafia_win',
+  CITIZENS_WIN: 'citizens_win',
+  ONGOING: 'ongoing'
+};
+
+// Victory messages
+export const VICTORY_MESSAGES = {
+  [VICTORY_CONDITIONS.MAFIA_WIN]: 'پیروزی مافیا! تعداد مافیاها برابر یا بیشتر از شهروندان شد',
+  [VICTORY_CONDITIONS.CITIZENS_WIN]: 'پیروزی شهروندان! تمام مافیاها حذف شدند',
+  MAFIA_DANGER: 'خطر! مافیا در حال برتری است'
+};
+
+// Helper function to check victory conditions
+export const checkVictoryCondition = (aliveMafia, aliveCitizens, totalMafia) => {
+  // Citizens win if all mafias are eliminated
+  if (aliveMafia === 0 && totalMafia > 0) {
+    return VICTORY_CONDITIONS.CITIZENS_WIN;
+  }
+  
+  // Mafia wins if mafia count is greater than or equal to citizen count
+  if (aliveMafia >= aliveCitizens && aliveMafia > 0) {
+    return VICTORY_CONDITIONS.MAFIA_WIN;
+  }
+  
+  // Game is ongoing
+  return VICTORY_CONDITIONS.ONGOING;
+};
+
 export const rolesByCount = {
   7: ["رئیس مافیا", "مافیای ساده", "پزشک", "کارآگاه", "شهروند ساده", "شهروند ساده", "شهروند ساده"],
   8: ["رئیس مافیا", "مافیای ساده", "پزشک", "کارآگاه", "شهروند ساده", "شهروند ساده", "شهروند ساده", "شهروند ساده"],
