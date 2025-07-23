@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { isMafiaRole, GAME_PHASES, PHASE_LABELS, VICTORY_CONDITIONS, VICTORY_MESSAGES, checkVictoryCondition } from '../../../constants/gameConstants';
 
 const GamePhaseControls = ({ 
@@ -16,6 +17,7 @@ const GamePhaseControls = ({
   finishCurrentDay, // Add this prop to finish the current day
   isReadOnly = false
 }) => {
+  const navigate = useNavigate();
   const [showVictoryModal, setShowVictoryModal] = useState(false);
   const [victoryData, setVictoryData] = useState(null);
 
@@ -56,10 +58,15 @@ const GamePhaseControls = ({
   // Handle victory modal close and finish day
   const handleVictoryModalClose = () => {
     setShowVictoryModal(false);
-    if (finishCurrentDay && !isReadOnly) {
-      // Finish the current day when game ends
-      finishCurrentDay();
-    }
+    // Finish the current day when victory modal is closed
+    finishCurrentDay();
+  };
+
+  const handleTransitionToNight = () => {
+    // Set phase to completed first
+    setCurrentPhase(GAME_PHASES.COMPLETED);
+    // Navigate to night control page
+    navigate('/night-control');
   };
 
   return (
@@ -244,6 +251,21 @@ const GamePhaseControls = ({
                     </div>
                   </>
                 )}
+              </div>
+
+              {/* Day Completion and Night Transition */}
+              <div className="row mt-3">
+                <div className="col-12">
+                  <div className="d-grid">
+                    <button 
+                      className="btn btn-dark btn-lg"
+                      onClick={handleTransitionToNight}
+                      disabled={isReadOnly || victoryCondition !== VICTORY_CONDITIONS.ONGOING}
+                    >
+                      🌙 اتمام روز و شروع شب
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

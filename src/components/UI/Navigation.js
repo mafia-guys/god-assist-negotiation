@@ -89,16 +89,38 @@ const Navigation = ({ gameStarted = false }) => {
               </Link>
             </li>
             {gameStarted && (
-              <li className="nav-item">
-                <Link 
-                  className={`nav-link ${isActive('/god-view') ? 'active' : ''}`} 
-                  to="/god-view"
-                  onClick={closeNavbar}
-                >
-                  <i className="bi bi-eye me-1"></i>
-                  لیست نهایی
-                </Link>
-              </li>
+              <>
+                <li className="nav-item">
+                  <Link 
+                    className={`nav-link ${isActive('/god-view') ? 'active' : ''}`} 
+                    to="/god-view"
+                    onClick={closeNavbar}
+                  >
+                    <i className="bi bi-eye me-1"></i>
+                    لیست نهایی
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link 
+                    className={`nav-link ${isActive('/day-control') ? 'active' : ''}`} 
+                    to="/day-control"
+                    onClick={closeNavbar}
+                  >
+                    <i className="bi bi-sun me-1"></i>
+                    کنترل روز
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link 
+                    className={`nav-link ${isActive('/night-control') ? 'active' : ''}`} 
+                    to="/night-control"
+                    onClick={closeNavbar}
+                  >
+                    <i className="bi bi-moon me-1"></i>
+                    کنترل شب
+                  </Link>
+                </li>
+              </>
             )}
           </ul>
         </div>

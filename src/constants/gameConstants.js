@@ -2,7 +2,7 @@
 
 // Game configuration constants
 export const GAME_CONFIG = {
-  DEFAULT_PLAYER_COUNT: 7,
+  DEFAULT_PLAYER_COUNT: 13,
   MIN_PLAYER_COUNT: 7,
   MAX_PLAYER_COUNT: 14
 };
@@ -31,7 +31,89 @@ export const GAME_PHASES = {
   DISCUSSION: 'discussion',
   VOTING: 'voting',
   TRIAL: 'trial',
-  COMPLETED: 'completed'
+  COMPLETED: 'completed',
+  NIGHT: 'night'
+};
+
+// Night phase order (who wakes up when)
+export const NIGHT_ORDER = {
+  MAFIA_TEAM: 1,
+  DETECTIVE: 2, 
+  REPORTER: 3,
+  SNIPER: 4,
+  DOCTOR: 5,
+  CONSTANTINE: 6
+};
+
+// Night phase order as array for iteration (using Persian role names)
+export const NIGHT_ORDER_SEQUENCE = [
+  'رئیس مافیا',
+  'مذاکره‌گر',
+  'مافیای ساده',
+  'کارآگاه', 
+  'خبرنگار',
+  'تک‌تیرانداز',
+  'پزشک',
+  'کنستانتین'
+];
+
+// Night actions constants
+export const NIGHT_ACTIONS = {
+  MAFIA_KILL: 'mafia_kill',
+  MAFIA_NEGOTIATE: 'mafia_negotiate',
+  DETECTIVE_INQUIRY: 'detective_inquiry',
+  REPORTER_CHECK: 'reporter_check',
+  SNIPER_SHOOT: 'sniper_shoot',
+  DOCTOR_SAVE: 'doctor_save',
+  CONSTANTINE_REVIVE: 'constantine_revive'
+};
+
+// Role night abilities
+export const ROLE_NIGHT_ABILITIES = {
+  "رئیس مافیا": {
+    order: NIGHT_ORDER.MAFIA_TEAM,
+    actions: [NIGHT_ACTIONS.MAFIA_KILL, NIGHT_ACTIONS.MAFIA_NEGOTIATE],
+    description: "رهبر تیم مافیا - تصمیم نهایی شلیک با اوست"
+  },
+  "مذاکره‌گر": {
+    order: NIGHT_ORDER.MAFIA_TEAM,
+    actions: [NIGHT_ACTIONS.MAFIA_KILL, NIGHT_ACTIONS.MAFIA_NEGOTIATE],
+    description: "می‌تواند با شهروندان مذاکره کند (در صورت از دست دادن یار مافیا)",
+    canNegotiate: true
+  },
+  "مافیای ساده": {
+    order: NIGHT_ORDER.MAFIA_TEAM,
+    actions: [NIGHT_ACTIONS.MAFIA_KILL],
+    description: "در تصمیم‌گیری شلیک شرکت می‌کند"
+  },
+  "کارآگاه": {
+    order: NIGHT_ORDER.DETECTIVE,
+    actions: [NIGHT_ACTIONS.DETECTIVE_INQUIRY],
+    description: "هر شب می‌تواند استعلام یک نفر را بگیرد"
+  },
+  "خبرنگار": {
+    order: NIGHT_ORDER.REPORTER,
+    actions: [NIGHT_ACTIONS.REPORTER_CHECK],
+    description: "می‌تواند بررسی کند که آیا فردی مذاکره‌شده است یا نه",
+    activatesAfterNegotiation: true
+  },
+  "تک‌تیرانداز": {
+    order: NIGHT_ORDER.SNIPER,
+    actions: [NIGHT_ACTIONS.SNIPER_SHOOT],
+    description: "یک بار در طول بازی می‌تواند شلیک کند",
+    oneTimeUse: true
+  },
+  "پزشک": {
+    order: NIGHT_ORDER.DOCTOR,
+    actions: [NIGHT_ACTIONS.DOCTOR_SAVE],
+    description: "هر شب می‌تواند یک یا دو نفر را نجات دهد"
+  },
+  "کنستانتین": {
+    order: NIGHT_ORDER.CONSTANTINE,
+    actions: [NIGHT_ACTIONS.CONSTANTINE_REVIVE],
+    description: "یک‌بار در طول بازی می‌تواند یکی از افراد حذف‌شده را به بازی بازگرداند",
+    oneTimeUse: true
+  }
 };
 
 // Persian phase labels
@@ -39,7 +121,8 @@ export const PHASE_LABELS = {
   [GAME_PHASES.DISCUSSION]: 'بحث و گفتگو',
   [GAME_PHASES.VOTING]: 'رای‌گیری',
   [GAME_PHASES.TRIAL]: 'محاکمه',
-  [GAME_PHASES.COMPLETED]: 'تمام شده'
+  [GAME_PHASES.COMPLETED]: 'تمام شده',
+  [GAME_PHASES.NIGHT]: 'شب'
 };
 
 // Event type constants
