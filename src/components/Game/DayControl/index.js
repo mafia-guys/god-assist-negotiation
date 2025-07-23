@@ -7,5 +7,4 @@ export { default as useDayControlState } from './useDayControlState';
 export * from './gameLogicUtils';
 export { default as SpeakingModal } from './SpeakingModal';
 export { default as ChallengeModal } from './ChallengeModal';
-export { default as DayControl } from './DayControl';
 export { default } from './DayControl';

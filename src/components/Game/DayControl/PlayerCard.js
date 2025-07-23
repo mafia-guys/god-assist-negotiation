@@ -136,7 +136,7 @@ const PlayerCard = ({
               
               {/* Trial Candidate Badge for alive players */}
               {player.isAlive && isTrialCandidate && (
-                <span className="badge bg-danger rounded-pill animate__animated animate__pulse">
+                <span className="badge bg-danger rounded-pill">
                   ⚖️ کاندیدای محاکمه
                 </span>
               )}
