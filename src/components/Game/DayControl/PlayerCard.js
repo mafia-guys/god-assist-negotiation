@@ -119,6 +119,25 @@ const PlayerCard = ({
             </h6>
             <small className="text-muted">{player.role}</small>
           </div>
+          <div className="col-auto">
+            {/* Eliminate/Revive Button - Available in all phases */}
+            <button 
+              className={`btn ${player.isAlive ? 'btn-danger' : 'btn-success'} btn-sm`}
+              onClick={() => player.isAlive ? eliminatePlayer(player.id, currentPhase === 'trial' ? 'trial' : 'manual') : revivePlayer(player.id)}
+              style={{
+                fontSize: '0.75rem',
+                padding: currentPhase === 'discussion' ? '2px 6px' : '4px 8px',
+                minWidth: currentPhase === 'discussion' ? '24px' : 'auto'
+              }}
+              title={player.isAlive ? 'حذف از بازی' : 'احیای بازیکن'}
+            >
+              {currentPhase === 'discussion' && player.isAlive ? (
+                <i className="bi bi-x-lg"></i>  // Simple X icon for discussion phase
+              ) : (
+                <i className={`bi ${player.isAlive ? 'bi-person-x' : 'bi-person-plus'}`}></i>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Status Badges */}
@@ -245,46 +264,11 @@ const PlayerCard = ({
                   </button>
                 )}
               </div>
-              
-              {/* Eliminate/Revive Button - Only show during discussion and trial phases */}
-              {(currentPhase === 'discussion' || currentPhase === 'trial') && (
-                <button 
-                  className={`btn mt-2 ${player.isAlive ? 'btn-danger' : 'btn-success'} ${
-                    currentPhase === 'trial' ? 'btn-sm w-100' : 'btn-xs px-2 py-1'
-                  }`}
-                  onClick={() => player.isAlive ? eliminatePlayer(player.id, currentPhase === 'trial' ? 'trial' : 'manual') : revivePlayer(player.id)}
-                  style={{
-                    fontSize: currentPhase === 'trial' ? '0.875rem' : '0.75rem',
-                    width: currentPhase === 'trial' ? '100%' : 'auto',
-                    alignSelf: currentPhase === 'trial' ? 'stretch' : 'flex-start'
-                  }}
-                >
-                  <i className={`bi ${player.isAlive ? 'bi-person-x' : 'bi-person-plus'} ${currentPhase === 'trial' ? 'me-1' : ''}`}></i>
-                  {currentPhase === 'trial' ? 
-                    (player.isAlive ? 'حذف از بازی' : 'احیای بازیکن') :
-                    (player.isAlive ? 'حذف' : 'احیا')
-                  }
-                </button>
-              )}
             </div>
           </div>
         )}
 
-        {/* Dead Player Actions */}
-        {!player.isAlive && (
-          <div className="row" style={{ position: 'relative', zIndex: 10 }}>
-            <div className="col-12">
-              <button 
-                className="btn btn-success btn-sm w-100"
-                onClick={() => revivePlayer(player.id)}
-                style={{ pointerEvents: 'auto' }} // Ensure button is clickable
-              >
-                <i className="bi bi-person-plus me-1"></i>
-                احیای بازیکن
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Dead Player Actions - No longer needed as button is in header */}
       </div>
     </div>
   );
