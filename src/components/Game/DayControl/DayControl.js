@@ -17,7 +17,7 @@ import {
   processPlayerData 
 } from './gameLogicUtils';
 
-const DayControl = ({ currentRoles, assignments }) => {
+const DayControl = ({ currentRoles, assignments, selectionOrder }) => {
   const {
     eliminatedPlayers,
     setEliminatedPlayers,
@@ -57,7 +57,7 @@ const DayControl = ({ currentRoles, assignments }) => {
     setChallengingPlayer
   } = useDayControlState();
 
-  const { alivePlayers, deadPlayers } = processPlayerData(currentRoles, assignments, eliminatedPlayers);
+  const { alivePlayers, deadPlayers } = processPlayerData(currentRoles, assignments, eliminatedPlayers, selectionOrder);
 
   const eliminatePlayer = (playerId, reason = 'manual') => {
     setEliminatedPlayers(prev => ({ ...prev, [playerId]: reason }));

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { DayControl } from '../components';
 
-const DayControlPage = ({ currentRoles, assignments }) => {
+const DayControlPage = ({ currentRoles, assignments, selectionOrder }) => {
   return (
     <div>
       {/* Header */}
@@ -26,7 +26,11 @@ const DayControlPage = ({ currentRoles, assignments }) => {
 
       {/* Content */}
       {currentRoles && currentRoles.length > 0 ? (
-        <DayControl currentRoles={currentRoles} assignments={assignments} />
+        <DayControl 
+          currentRoles={currentRoles} 
+          assignments={assignments}
+          selectionOrder={selectionOrder}
+        />
       ) : (
         <div className="container text-center py-5">
           <div className="card shadow-sm border-0 mx-auto" style={{ maxWidth: '400px' }}>

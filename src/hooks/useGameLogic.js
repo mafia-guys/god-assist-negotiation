@@ -9,6 +9,7 @@ const useGameLogic = () => {
   const [usedButtons, setUsedButtons] = useState(new Set());
   const [showRoleDisplay, setShowRoleDisplay] = useState(false);
   const [playerName, setPlayerName] = useState('');
+  const [selectionOrder, setSelectionOrder] = useState([]); // Track selection order
 
   const shuffle = (array) => {
     const shuffled = [...array];
@@ -28,6 +29,7 @@ const useGameLogic = () => {
     setCurrentRoles(roles);
     setAssignments(new Array(playerCount).fill(null));
     setUsedButtons(new Set());
+    setSelectionOrder([]); // Reset selection order
     setShowRoleDisplay(false);
   }, [playerCount]);
 
@@ -70,6 +72,7 @@ const useGameLogic = () => {
       return newAssignments;
     });
     setUsedButtons(prev => new Set([...prev, currentIndex]));
+    setSelectionOrder(prev => [...prev, currentIndex]); // Track selection order
     setShowRoleDisplay(false);
   }, [playerName, currentIndex, currentRoles]);
 
@@ -87,6 +90,7 @@ const useGameLogic = () => {
     setCurrentIndex(-1);
     setAssignments([]);
     setUsedButtons(new Set());
+    setSelectionOrder([]); // Reset selection order
     setShowRoleDisplay(false);
     setPlayerName('');
   }, []);
@@ -97,6 +101,7 @@ const useGameLogic = () => {
     currentRoles,
     currentIndex,
     assignments,
+    selectionOrder, // Export selection order
     usedButtons,
     showRoleDisplay,
     playerName,

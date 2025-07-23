@@ -58,8 +58,14 @@ export const getAvailableChallengees = (challengerId, alivePlayers, playerChalle
 };
 
 // Process player data
-export const processPlayerData = (currentRoles, assignments, eliminatedPlayers) => {
-  // Get all players with their roles and names, ordered by selection sequence
+export const processPlayerData = (currentRoles, assignments, eliminatedPlayers, selectionOrder = []) => {
+  // Create a map of selection order
+  const orderMap = new Map();
+  selectionOrder.forEach((buttonIndex, orderIndex) => {
+    orderMap.set(buttonIndex, orderIndex);
+  });
+
+  // Get all players with their roles and names
   const allPlayers = currentRoles.map((role, index) => {
     const assignment = assignments[index];
     const eliminationReason = eliminatedPlayers[index]; // Get elimination reason if exists
@@ -69,28 +75,26 @@ export const processPlayerData = (currentRoles, assignments, eliminatedPlayers) 
       role: role,
       isAlive: !eliminationReason, // Player is alive if not in eliminatedPlayers object
       eliminationReason: eliminationReason, // Store elimination reason
-      originalIndex: index + 1 // Store the original button number (1-based)
+      originalIndex: index + 1, // Store the original button number (1-based)
+      selectionOrder: orderMap.get(index) ?? 999 // Use 999 for unselected players
     };
   })
-  // Sort by the order players were chosen (those with names first, then by assignment order)
+  // Sort by selection order (players chosen first come first)
   .sort((a, b) => {
-    const aHasName = assignments[a.id]?.name;
-    const bHasName = assignments[b.id]?.name;
+    // First sort by whether they have names (selected players come first)
+    const aHasName = a.selectionOrder !== 999;
+    const bHasName = b.selectionOrder !== 999;
     
-    // If both have names or both don't have names, maintain original assignment order
-    if ((aHasName && bHasName) || (!aHasName && !bHasName)) {
-      // Find the actual selection order by looking at assignments array
-      const aAssignmentIndex = assignments.findIndex((assignment, idx) => idx === a.id && assignment?.name);
-      const bAssignmentIndex = assignments.findIndex((assignment, idx) => idx === b.id && assignment?.name);
-      
-      if (aAssignmentIndex !== -1 && bAssignmentIndex !== -1) {
-        return aAssignmentIndex - bAssignmentIndex;
-      }
-      return a.id - b.id;
+    if (aHasName && !bHasName) return -1;
+    if (!aHasName && bHasName) return 1;
+    
+    // If both have names, sort by selection order
+    if (aHasName && bHasName) {
+      return a.selectionOrder - b.selectionOrder;
     }
     
-    // Players with names (chosen players) come first
-    return aHasName ? -1 : 1;
+    // If neither have names, sort by original index
+    return a.id - b.id;
   });
 
   const alivePlayers = allPlayers.filter(player => player.isAlive);

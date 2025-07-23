@@ -12,6 +12,7 @@ const App = () => {
     currentRoles,
     currentIndex,
     assignments,
+    selectionOrder, // Add selectionOrder
     usedButtons,
     showRoleDisplay,
     playerName,
@@ -97,6 +98,7 @@ const App = () => {
               <DayControlPage 
                 currentRoles={currentRoles}
                 assignments={assignments}
+                selectionOrder={selectionOrder}
               />
             } 
           />
