@@ -183,30 +183,52 @@ const DayControl = ({ currentRoles, assignments, selectionOrder }) => {
       return { action: 'incomplete_voting', message: 'همه کاندیداها هنوز رای نهایی دریافت نکرده‌اند' };
     }
 
-    // Find candidates who meet conviction threshold
     const requiredVotes = getRequiredVotes(alivePlayers.length);
-    const convictedCandidates = trialCandidates.filter(player => 
-      (trialVotes[player.id] || 0) >= requiredVotes
-    );
 
-    if (convictedCandidates.length === 0) {
-      return { action: 'acquittal', message: 'همه متهمان تبرئه شدند' };
+    // Single player in trial - apply traditional rule (need majority)
+    if (trialCandidates.length === 1) {
+      const player = trialCandidates[0];
+      const votesReceived = trialVotes[player.id] || 0;
+      
+      if (votesReceived >= requiredVotes) {
+        eliminatePlayer(player.id, 'trial');
+        return { 
+          action: 'elimination', 
+          message: `${player.name} محکوم و اخراج شده توسط شهر`,
+          eliminatedPlayer: player
+        };
+      } else {
+        return { action: 'acquittal', message: `${player.name} تبرئه شد` };
+      }
     }
 
-    if (convictedCandidates.length === 1) {
-      // Auto-eliminate the convicted player
-      eliminatePlayer(convictedCandidates[0].id);
+    // Multiple players in trial - whoever has most votes gets eliminated
+    const candidatesWithVoteCount = trialCandidates.map(player => ({
+      player,
+      votes: trialVotes[player.id] || 0
+    }));
+
+    // Find the highest vote count
+    const maxVotes = Math.max(...candidatesWithVoteCount.map(c => c.votes));
+    const playersWithMaxVotes = candidatesWithVoteCount.filter(c => c.votes === maxVotes);
+
+    // If there's a tie for most votes, god decides manually
+    if (playersWithMaxVotes.length > 1) {
+      const tiedPlayerNames = playersWithMaxVotes.map(c => c.player.name).join('، ');
       return { 
-        action: 'elimination', 
-        message: `${convictedCandidates[0].name} محکوم و حذف شد`,
-        eliminatedPlayer: convictedCandidates[0]
+        action: 'tie_for_elimination', 
+        message: `تساوی آرا بین ${tiedPlayerNames} (هر کدام ${maxVotes} رای) - خدا تصمیم بگیرد`,
+        tiedPlayers: playersWithMaxVotes.map(c => c.player)
       };
     }
 
+    // Single player with most votes gets eliminated (regardless of vote count)
+    const playerToEliminate = playersWithMaxVotes[0].player;
+    eliminatePlayer(playerToEliminate.id, 'trial');
     return { 
-      action: 'multiple_convictions', 
-      message: `${convictedCandidates.length} نفر محکوم شدند - تصمیم‌گیری لازم است`,
-      convictedPlayers: convictedCandidates
+      action: 'elimination', 
+      message: `${playerToEliminate.name} با ${maxVotes} رای اخراج شده توسط شهر`,
+      eliminatedPlayer: playerToEliminate
     };
   };
 
