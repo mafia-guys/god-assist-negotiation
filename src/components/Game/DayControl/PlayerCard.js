@@ -144,46 +144,32 @@ const PlayerCard = ({
         <div className="row mb-3">
           <div className="col-12">
             <div className="d-flex flex-wrap gap-1">
-              {/* Votes Badge */}
+              {/* Challenges Badge - Only show in discussion phase */}
+              {currentPhase === 'discussion' && challengesReceived > 0 && (
+                <span className="badge bg-warning rounded-pill">
+                  ⚔️ چالش: {challengesReceived}/{maxChallenges}
+                </span>
+              )}
+              
+              {/* Votes Badge - Only in voting and trial phases */}
               {(currentPhase === 'voting' || currentPhase === 'trial') && (
                 <span className="badge bg-primary rounded-pill">
                   📊 آرا: {votes}
                 </span>
               )}
               
-              {/* Challenges Badge */}
-              {challengesReceived > 0 && (
-                <span className="badge bg-warning rounded-pill">
-                  ⚔️ چالش: {challengesReceived}/{maxChallenges}
-                </span>
-              )}
-              
-              {/* Trial Candidate Badge for alive players */}
-              {player.isAlive && isTrialCandidate && (
+              {/* Trial Candidate Badge - Only in voting and trial phases for alive players */}
+              {player.isAlive && isTrialCandidate && (currentPhase === 'voting' || currentPhase === 'trial') && (
                 <span className="badge bg-danger rounded-pill">
                   ⚖️ کاندیدای محاکمه
-                </span>
-              )}
-              
-              {/* Speaking Status */}
-              {hasSpoken && (
-                <span className="badge bg-success rounded-pill">
-                  🗣️ صحبت کرده
-                </span>
-              )}
-              
-              {/* Challenge Given Status */}
-              {hasGivenChallenge && (
-                <span className="badge bg-secondary rounded-pill">
-                  ⚔️ چالش داده
                 </span>
               )}
             </div>
           </div>
         </div>
 
-        {/* Challenge Details */}
-        {challengesByWho.length > 0 && (
+        {/* Challenge Details - Only show during discussion phase */}
+        {currentPhase === 'discussion' && challengesByWho.length > 0 && (
           <div className="row mb-2">
             <div className="col-12">
               <div className="alert alert-warning alert-sm py-1 px-2 mb-0">

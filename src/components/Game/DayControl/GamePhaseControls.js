@@ -69,39 +69,52 @@ const GamePhaseControls = ({
           <div className="card">
             <div className="card-body">
               <div className="row g-2">
-                <div className="col-md-3">
-                  <button 
-                    className="btn btn-warning w-100"
-                    onClick={resetVotes}
-                  >
-                    ریست آرا
-                  </button>
-                </div>
-                <div className="col-md-3">
-                  <button 
-                    className="btn btn-danger w-100"
-                    onClick={resetTrialVotes}
-                  >
-                    ریست محاکمه
-                  </button>
-                </div>
-                <div className="col-md-3">
-                  <button 
-                    className="btn btn-info w-100"
-                    onClick={resetChallenges}
-                  >
-                    ریست چالش‌ها
-                  </button>
-                </div>
-                <div className="col-md-3">
-                  <button 
-                    className="btn btn-success w-100"
-                    onClick={handleProcessTrialResults}
-                    disabled={getTrialCandidates().length === 0}
-                  >
-                    نتیجه محاکمه
-                  </button>
-                </div>
+                {/* Discussion Phase Actions */}
+                {currentPhase === 'discussion' && (
+                  <div className="col-md-6">
+                    <button 
+                      className="btn btn-info w-100"
+                      onClick={resetChallenges}
+                    >
+                      ریست چالش‌ها
+                    </button>
+                  </div>
+                )}
+
+                {/* Voting Phase Actions */}
+                {currentPhase === 'voting' && (
+                  <div className="col-md-6">
+                    <button 
+                      className="btn btn-warning w-100"
+                      onClick={resetVotes}
+                    >
+                      ریست آرا
+                    </button>
+                  </div>
+                )}
+
+                {/* Trial Phase Actions */}
+                {currentPhase === 'trial' && (
+                  <>
+                    <div className="col-md-6">
+                      <button 
+                        className="btn btn-danger w-100"
+                        onClick={resetTrialVotes}
+                      >
+                        ریست محاکمه
+                      </button>
+                    </div>
+                    <div className="col-md-6">
+                      <button 
+                        className="btn btn-success w-100"
+                        onClick={handleProcessTrialResults}
+                        disabled={getTrialCandidates().length === 0}
+                      >
+                        نتیجه محاکمه
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
