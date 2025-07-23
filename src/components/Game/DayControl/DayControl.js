@@ -57,7 +57,7 @@ const DayControl = ({ currentRoles, assignments, selectionOrder }) => {
     setChallengingPlayer
   } = useDayControlState();
 
-  const { alivePlayers, deadPlayers } = processPlayerData(currentRoles, assignments, eliminatedPlayers, selectionOrder);
+    const { alivePlayers, deadPlayers } = processPlayerData(currentRoles, assignments, eliminatedPlayers, selectionOrder);
 
   const eliminatePlayer = (playerId, reason = 'manual') => {
     setEliminatedPlayers(prev => ({ ...prev, [playerId]: reason }));

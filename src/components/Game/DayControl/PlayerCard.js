@@ -72,8 +72,18 @@ const PlayerCard = ({
     >
       {/* Dead player overlay */}
       {!player.isAlive && (
-        <div className={styles.deadOverlay}>
-          <span className="badge bg-dark fs-6 px-3 py-2">
+        <div 
+          className={styles.deadOverlay}
+          style={{ 
+            pointerEvents: 'none' // Allow clicks to pass through to underlying elements
+          }}
+        >
+          <span 
+            className="badge bg-dark fs-6 px-3 py-2"
+            style={{ 
+              pointerEvents: 'auto' // Re-enable pointer events for the badge itself
+            }}
+          >
             💀 {player.eliminationReason === 'trial' ? 'اخراج شده توسط شهر' : 'حذف شده'}
           </span>
         </div>
@@ -108,11 +118,6 @@ const PlayerCard = ({
               {!player.isAlive && <span className="ms-2">💀</span>}
             </h6>
             <small className="text-muted">{player.role}</small>
-          </div>
-          <div className="col-auto">
-            <span className="badge bg-info rounded-pill">
-              #{player.originalIndex}
-            </span>
           </div>
         </div>
 
@@ -267,11 +272,12 @@ const PlayerCard = ({
 
         {/* Dead Player Actions */}
         {!player.isAlive && (
-          <div className="row">
+          <div className="row" style={{ position: 'relative', zIndex: 10 }}>
             <div className="col-12">
               <button 
                 className="btn btn-success btn-sm w-100"
                 onClick={() => revivePlayer(player.id)}
+                style={{ pointerEvents: 'auto' }} // Ensure button is clickable
               >
                 <i className="bi bi-person-plus me-1"></i>
                 احیای بازیکن
